@@ -52,7 +52,7 @@ function getApiPath() {
   const path = window.location.pathname;
   
   // Auto-detect path berdasarkan lokasi halaman
-  // Jika halaman di /sipelok/presensi.html, API di /sipelok/api/api.php
+  // Jika halaman di /sijaga/presensi.html, API di /sijaga/api/api.php
   const basePath = path.substring(0, path.lastIndexOf('/') + 1);
   return basePath + 'api/api.php';
 }
@@ -173,7 +173,7 @@ async function http(action, opts) {
 **Struktur yang Benar:**
 ```
 /public_html/ (atauhtdocs/)
-└── sipelok/ (atau nama folder Anda)
+└── sijaga/ (atau nama folder Anda)
     ├── index.html
     ├── presensi.html
     ├── admin.html
@@ -205,16 +205,16 @@ async function http(action, opts) {
 console.log("API Path:", API);
 
 // Contoh output:
-// API Path: /sipelok/api/api.php
+// API Path: /sijaga/api/api.php
 ```
 
 **Test URL Secara Manual:**
 ```
 Buka di browser:
-http://yourdomain.com/sipelok/api/api.php?action=ping
+http://yourdomain.com/sijaga/api/api.php?action=ping
 
 Harus mengembalikan:
-{"ok":true,"db":"sipelok","version":"10.4.28-MariaDB","waktu":"2024-01-15T10:30:00+08:00"}
+{"ok":true,"db":"sijaga","version":"10.4.28-MariaDB","waktu":"2024-01-15T10:30:00+08:00"}
 ```
 
 ### Langkah 3: Periksa Permission File
@@ -228,7 +228,7 @@ api/uploads/   → 755 (rwxr-xr-x)
 
 **Via SSH (jika ada akses):**
 ```bash
-cd /path/to/sipelok
+cd /path/to/sijaga
 chmod 644 api/api.php
 chmod 644 api/config.php
 chmod 755 api/uploads/
@@ -282,7 +282,7 @@ tail -f /var/log/litespeed/error.log | grep "api.php"
 
 **Upload dan buka:**
 ```
-http://yourdomain.com/sipelok/test-api.html
+http://yourdomain.com/sijaga/test-api.html
 ```
 
 ## 📊 Kemungkinan Struktur Server
@@ -299,39 +299,39 @@ http://yourdomain.com/sipelok/test-api.html
 
 ### Struktur 2: Subfolder
 ```
-/public_html/sipelok/
+/public_html/sijaga/
 ├── index.html
 ├── presensi.html
 └── api/
     └── api.php
 ```
-**URL:** `http://domain.com/sipelok/api/api.php`
+**URL:** `http://domain.com/sijaga/api/api.php`
 
 ### Struktur 3: Subdomain
 ```
-/public_html/sipelok.domain.com/
+/public_html/sijaga.domain.com/
 ├── index.html
 ├── presensi.html
 └── api/
     └── api.php
 ```
-**URL:** `http://sipelok.domain.com/api/api.php`
+**URL:** `http://sijaga.domain.com/api/api.php`
 
 ## 🧪 Cara Menguji Perbaikan
 
 ### Test 1: Auto-Detection Path
 ```
-1. Buka: http://yourdomain.com/sipelok/presensi.html
+1. Buka: http://yourdomain.com/sijaga/presensi.html
 2. Buka Console browser (F12)
 3. Lihat log:
-   ✅ "API Path: /sipelok/api/api.php"
+   ✅ "API Path: /sijaga/api/api.php"
    ✅ Path otomatis terdeteksi
 ```
 
 ### Test 2: Error 404 Handling
 ```
 1. Hapus folder api/ sementara
-2. Buka: http://yourdomain.com/sipelok/presensi.html
+2. Buka: http://yourdomain.com/sijaga/presensi.html
 3. Coba submit presensi
 4. Lihat error message:
    ✅ "✗ File API tidak ditemukan (404)"
@@ -343,10 +343,10 @@ http://yourdomain.com/sipelok/test-api.html
 ```
 1. Pastikan folder api/ ada
 2. Pastikan file api.php ada
-3. Buka: http://yourdomain.com/sipelok/presensi.html
+3. Buka: http://yourdomain.com/sijaga/presensi.html
 4. Submit presensi
 5. Lihat console:
-   ✅ "API Path: /sipelok/api/api.php"
+   ✅ "API Path: /sijaga/api/api.php"
    ✅ "=== httpWithProgress SUCCESS ==="
    ✅ "✓ Upload selesai!"
 ```
@@ -367,10 +367,10 @@ http://yourdomain.com/sipelok/test-api.html
 
 ## 🚀 Cara Update
 
-Salin ulang file berikut ke `C:\xampp\htdocs\sipelok\` (atau folder server Anda):
+Salin ulang file berikut ke `C:\xampp\htdocs\sijaga\` (atau folder server Anda):
 
 ```
-sipelok/
+sijaga/
 └── js/
     └── util.js    ← PERBARUI
 ```
@@ -437,7 +437,7 @@ systemctl restart lsws
 
 ### Langkah 2: Test Manual
 ```
-1. Buka: http://yourdomain.com/sipelok/api/api.php?action=ping
+1. Buka: http://yourdomain.com/sijaga/api/api.php?action=ping
 2. Screenshot hasilnya
 3. Jika error, catat error message
 ```

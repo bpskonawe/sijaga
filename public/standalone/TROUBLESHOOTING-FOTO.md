@@ -27,7 +27,7 @@ Kolom `foto_masuk` atau `foto_keluar` terlalu kecil untuk menyimpan path.
 
 #### Windows (XAMPP):
 1. Buka File Explorer
-2. Navigasi ke `C:\xampp\htdocs\sipelok\api\uploads\`
+2. Navigasi ke `C:\xampp\htdocs\sijaga\api\uploads\`
 3. Right-click folder `uploads` → Properties → Security
 4. Klik "Edit" → "Add"
 5. Tambahkan user: `IUSR` dan `IIS_IUSRS`
@@ -36,7 +36,7 @@ Kolom `foto_masuk` atau `foto_keluar` terlalu kecil untuk menyimpan path.
 
 #### Linux/Mac:
 ```bash
-cd /path/to/sipelok/api
+cd /path/to/sijaga/api
 chmod -R 755 uploads
 chown -R www-data:www-data uploads  # Ubuntu/Debian
 # atau
@@ -47,7 +47,7 @@ chown -R apache:apache uploads  # CentOS/RHEL
 
 Pastikan struktur folder seperti ini:
 ```
-sipelok/
+sijaga/
 ├── api/
 │   ├── api.php
 │   ├── config.php
@@ -60,7 +60,7 @@ sipelok/
 ### Solusi 3: Test Upload dengan Halaman Test
 
 1. Buka browser
-2. Akses: `http://localhost/sipelok/test-upload.html`
+2. Akses: `http://localhost/sijaga/test-upload.html`
 3. Klik "Choose File" dan ambil foto
 4. Klik "Upload Foto Test"
 5. Lihat log untuk detail error
@@ -84,29 +84,29 @@ C:\xampp\php\logs\php_error_log  (Windows)
 /var/log/php_errors.log           (Linux)
 ```
 
-Cari error yang mengandung "SIPELOK Foto":
+Cari error yang mengandung "SIJAGA Foto":
 ```
-[15-Jan-2024 10:30:16] SIPELOK Foto: Memproses data URL untuk ID abc123, panjang: 327556
-[15-Jan-2024 10:30:16] SIPELOK Foto: Berhasil decode base64, ukuran: 245670 bytes
-[15-Jan-2024 10:30:16] SIPELOK Foto: Menyimpan ke: C:\xampp\htdocs\sipelok\api\uploads/abc123_masuk.jpg
-[15-Jan-2024 10:30:16] SIPELOK Foto: Berhasil menyimpan file: C:\xampp\htdocs\sipelok\api\uploads/abc123_masuk.jpg (245670 bytes)
+[15-Jan-2024 10:30:16] SIJAGA Foto: Memproses data URL untuk ID abc123, panjang: 327556
+[15-Jan-2024 10:30:16] SIJAGA Foto: Berhasil decode base64, ukuran: 245670 bytes
+[15-Jan-2024 10:30:16] SIJAGA Foto: Menyimpan ke: C:\xampp\htdocs\sijaga\api\uploads/abc123_masuk.jpg
+[15-Jan-2024 10:30:16] SIJAGA Foto: Berhasil menyimpan file: C:\xampp\htdocs\sijaga\api\uploads/abc123_masuk.jpg (245670 bytes)
 ```
 
 **Error yang Mungkin Muncul:**
 
 ```
-SIPELOK Foto: Folder uploads tidak ada, mencoba membuat: C:\xampp\htdocs\sipelok\api\uploads
-SIPELOK Foto: GAGAL membuat folder uploads: C:\xampp\htdocs\sipelok\api\uploads
+SIJAGA Foto: Folder uploads tidak ada, mencoba membuat: C:\xampp\htdocs\sijaga\api\uploads
+SIJAGA Foto: GAGAL membuat folder uploads: C:\xampp\htdocs\sijaga\api\uploads
 ```
 → **Solusi**: Buat folder manual dan set permission
 
 ```
-SIPELOK Foto: Folder uploads tidak writable: C:\xampp\htdocs\sipelok\api\uploads
+SIJAGA Foto: Folder uploads tidak writable: C:\xampp\htdocs\sijaga\api\uploads
 ```
 → **Solusi**: Set permission folder (lihat Solusi 1)
 
 ```
-SIPELOK Foto: GAGAL menyimpan file: C:\xampp\htdocs\sipelok\api\uploads/abc123_masuk.jpg
+SIJAGA Foto: GAGAL menyimpan file: C:\xampp\htdocs\sijaga\api\uploads/abc123_masuk.jpg
 ```
 → **Solusi**: Periksa disk space dan permission
 
@@ -146,9 +146,9 @@ cat > test.json << EOF
 EOF
 
 # Upload ke API
-curl -X POST "http://localhost/sipelok/api/api.php?action=save&table=records" \
+curl -X POST "http://localhost/sijaga/api/api.php?action=save&table=records" \
   -H "Content-Type: application/json" \
-  -H "X-Sipelok-Key: sipelok-konawe-2024" \
+  -H "X-Sijaga-Key: sijaga-konawe-2024" \
   -d @test.json
 ```
 
@@ -159,7 +159,7 @@ curl -X POST "http://localhost/sipelok/api/api.php?action=save&table=records" \
 - [ ] File `api/api.php` adalah versi terbaru (dengan logging)
 - [ ] Database tabel `presensi` memiliki kolom `foto_masuk` dan `foto_keluar`
 - [ ] Test upload via `test-upload.html` berhasil
-- [ ] PHP error log tidak menunjukkan error "SIPELOK Foto"
+- [ ] PHP error log tidak menunjukkan error "SIJAGA Foto"
 - [ ] File foto muncul di folder `api/uploads/`
 - [ ] Path foto tersimpan di database (bukan data URL)
 
@@ -167,7 +167,7 @@ curl -X POST "http://localhost/sipelok/api/api.php?action=save&table=records" \
 
 ### Step 1: Test Halaman Test Upload
 ```
-1. Buka: http://localhost/sipelok/test-upload.html
+1. Buka: http://localhost/sijaga/test-upload.html
 2. Ambil foto
 3. Upload
 4. Lihat log
@@ -176,13 +176,13 @@ curl -X POST "http://localhost/sipelok/api/api.php?action=save&table=records" \
 ### Step 2: Periksa PHP Error Log
 ```
 1. Buka: C:\xampp\php\logs\php_error_log
-2. Cari: "SIPELOK Foto"
+2. Cari: "SIJAGA Foto"
 3. Lihat error terakhir
 ```
 
 ### Step 3: Periksa Folder Uploads
 ```
-1. Buka: C:\xampp\htdocs\sipelok\api\uploads\
+1. Buka: C:\xampp\htdocs\sijaga\api\uploads\
 2. Apakah ada file .jpg?
 3. Jika ada, berapa ukurannya?
 ```
@@ -202,7 +202,7 @@ LIMIT 10;
 ### Step 5: Test Akses File Foto
 ```
 1. Ambil path dari database, misal: api/uploads/abc123_masuk.jpg
-2. Buka di browser: http://localhost/sipelok/api/uploads/abc123_masuk.jpg
+2. Buka di browser: http://localhost/sijaga/api/uploads/abc123_masuk.jpg
 3. Apakah foto muncul?
 ```
 

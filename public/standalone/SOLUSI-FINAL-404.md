@@ -27,7 +27,7 @@ Ini akan **memaksa browser** untuk download file baru.
 
 ```javascript
 const UTIL_VERSION = "2.0.0";
-console.log("📦 SIPELOK util.js version:", UTIL_VERSION);
+console.log("📦 SIJAGA util.js version:", UTIL_VERSION);
 ```
 
 ### 3. **Version Check di presensi.html**
@@ -136,7 +136,7 @@ Buka Console browser (F12) dan lihat:
 
 **Yang Diharapkan:**
 ```
-📦 SIPELOK util.js version: 2.0.0
+📦 SIJAGA util.js version: 2.0.0
 ```
 
 **Jika Masih Muncul Versi Lama:**
@@ -149,7 +149,7 @@ undefined
 
 Buka:
 ```
-https://sipelok.bpskabkonawe.com/standalone/diagnostic.html
+https://sijaga.bpskabkonawe.com/standalone/diagnostic.html
 ```
 
 Klik **"Jalankan Semua Test"** dan lihat hasilnya.
@@ -162,7 +162,7 @@ Buka presensi.html dan tekan F12:
 
 **Jika Sudah Updated:**
 ```
-📦 SIPELOK util.js version: 2.0.0
+📦 SIJAGA util.js version: 2.0.0
 API Path: /standalone/api/api.php
 ```
 
@@ -241,7 +241,7 @@ Cache Manager → Flush All
 - [ ] **Semua file HTML sudah diupload** dengan cache-busting
 - [ ] **Browser cache sudah di-clear** (Ctrl+Shift+Delete)
 - [ ] **Hard refresh sudah dilakukan** (Ctrl+Shift+R)
-- [ ] **Console browser menampilkan** "📦 SIPELOK util.js version: 2.0.0"
+- [ ] **Console browser menampilkan** "📦 SIJAGA util.js version: 2.0.0"
 - [ ] **Network tab menampilkan** `util.js?v=2.0.0`
 - [ ] **diagnostic.html sudah diupload** dan bisa diakses
 - [ ] **Test di diagnostic.html** semua test ✓
@@ -253,14 +253,14 @@ Cache Manager → Flush All
 
 **Console Browser:**
 ```
-📦 SIPELOK util.js version: 2.0.0
+📦 SIJAGA util.js version: 2.0.0
 API Path: /standalone/api/api.php
 === checkIn START ===
 Record ID: abc123
 Mode: db
 Sending only new record to server...
 === httpWithProgress ATTEMPT 1 / 3 ===
-URL: https://sipelok.bpskabkonawe.com/standalone/api/api.php?action=save&table=records
+URL: https://sijaga.bpskabkonawe.com/standalone/api/api.php?action=save&table=records
 ✓ Presensi berhasil disimpan ke database. ID: abc123
 ```
 
@@ -274,11 +274,11 @@ URL: https://sipelok.bpskabkonawe.com/standalone/api/api.php?action=save&table=r
 
 **Console Browser:**
 ```
-📦 SIPELOK util.js version: 2.0.0
+📦 SIJAGA util.js version: 2.0.0
 === httpWithProgress HTML RESPONSE ERROR ===
 Server mengembalikan HTML, bukan JSON.
 
-URL: https://sipelok.bpskabkonawe.com/standalone/api/api.php?action=save&table=records
+URL: https://sijaga.bpskabkonawe.com/standalone/api/api.php?action=save&table=records
 HTTP Status: 404
 
 Ini berarti:
@@ -295,7 +295,7 @@ SOLUSI:
 Kumpulkan informasi berikut:
 
 1. **Screenshot Console Browser (F12)**
-   - Harus menampilkan: "📦 SIPELOK util.js version: 2.0.0"
+   - Harus menampilkan: "📦 SIJAGA util.js version: 2.0.0"
    - Jika tidak, browser masih menggunakan cache lama
 
 2. **Screenshot Network Tab**

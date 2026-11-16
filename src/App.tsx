@@ -75,14 +75,9 @@ export default function App() {
       <div className="wrap">
         {/* header */}
         <header className="top">
-          <span className="mark">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
-              <rect x="3" y="4" width="18" height="16" rx="3.5" />
-              <path d="M3 9.5h18M7 16.5v-3M11 16.5v-5M15 16.5v-2" />
-            </svg>
-          </span>
+          <img className="mark" src="icon.svg" alt="Logo SIJAGA" width={44} height={44} style={{ background: "none", display: "block" }} />
           <span className="word">
-            <b>SIPELOK</b>
+            <b>SIJAGA</b>
             <small>BPS Kabupaten Konawe</small>
           </span>
           <span className="pill">
@@ -94,9 +89,9 @@ export default function App() {
         <section className="hero">
           <div className="hero-kiri">
             <h1 className="rise">
-              Presensi piket
+              Jadwal &amp; presensi
               <br />
-              <em>loket pelayanan.</em>
+              <em>petugas pelayanan.</em>
             </h1>
             <p className="lead rise" style={{ animationDelay: "0.08s" }}>
               Setiap petugas piket mencatat <strong>jam mulai</strong> dan <strong>jam selesai</strong> bertugas lewat
@@ -145,7 +140,7 @@ export default function App() {
         </section>
 
         <footer className="foot">
-          <b>SIPELOK</b> · Badan Pusat Statistik Kabupaten Konawe
+          <b>SIJAGA</b> — Sistem Informasi Jadwal Petugas Pelayanan · Badan Pusat Statistik Kabupaten Konawe
         </footer>
       </div>
     </div>

@@ -1,11 +1,11 @@
-# Perbaikan: Error "Kunci API tidak valid (X-Sipelok-Key)" saat Delete
+# Perbaikan: Error "Kunci API tidak valid (X-Sijaga-Key)" saat Delete
 
 ## 🐛 Masalah yang Dilaporkan
 
 **Error di Console:**
 ```
 HTTP Error: delete 
-{ok: false, error: 'Kunci API tidak valid (X-Sipelok-Key)'}
+{ok: false, error: 'Kunci API tidak valid (X-Sijaga-Key)'}
 ```
 
 ## 🔍 Akar Masalah
@@ -19,11 +19,11 @@ async function http(action, opts) {
   
   if (opts.body) {
     init.headers["Content-Type"] = "application/json";
-    init.headers["X-Sipelok-Key"] = API_KEY;  // ❌ Hanya dikirim untuk POST
+    init.headers["X-Sijaga-Key"] = API_KEY;  // ❌ Hanya dikirim untuk POST
     init.body = JSON.stringify(opts.body);
   } else {
     console.log("HTTP GET:", action);
-    // ❌ Header X-Sipelok-Key TIDAK dikirim untuk GET!
+    // ❌ Header X-Sijaga-Key TIDAK dikirim untuk GET!
   }
   
   const r = await fetch(url, init);
@@ -32,7 +32,7 @@ async function http(action, opts) {
 ```
 
 **Masalah:**
-- Header `X-Sipelok-Key` hanya dikirim untuk request POST (yang punya body)
+- Header `X-Sijaga-Key` hanya dikirim untuk request POST (yang punya body)
 - Request GET (seperti delete, ping, bootstrap) tidak mengirim header
 - API PHP menolak request tanpa header → error "Kunci API tidak valid"
 
@@ -67,7 +67,7 @@ async function http(action, opts) {
   const init = { method: opts.body ? "POST" : "GET", headers: {} };
   
   // ✅ Selalu kirim API key untuk semua request (GET dan POST)
-  init.headers["X-Sipelok-Key"] = API_KEY;
+  init.headers["X-Sijaga-Key"] = API_KEY;
   
   if (opts.body) {
     init.headers["Content-Type"] = "application/json";
@@ -83,7 +83,7 @@ async function http(action, opts) {
 ```
 
 **Keuntungan:**
-- ✅ Header `X-Sipelok-Key` selalu dikirim untuk semua request
+- ✅ Header `X-Sijaga-Key` selalu dikirim untuk semua request
 - ✅ Tidak ada error "Kunci API tidak valid"
 - ✅ Semua operasi (GET dan POST) terautentikasi
 - ✅ Lebih aman
@@ -92,7 +92,7 @@ async function http(action, opts) {
 
 ### Test 1: Delete Presensi
 ```
-1. Buka: http://localhost/sipelok/admin.html
+1. Buka: http://localhost/sijaga/admin.html
 2. Pilih tab "Rekap Presensi"
 3. Centang beberapa presensi
 4. Klik "Hapus Terpilih"
@@ -104,7 +104,7 @@ async function http(action, opts) {
 
 ### Test 2: Delete Petugas
 ```
-1. Buka: http://localhost/sipelok/admin.html
+1. Buka: http://localhost/sijaga/admin.html
 2. Pilih tab "Petugas"
 3. Klik "Hapus" pada salah satu petugas
 4. Lihat console browser (F12):
@@ -125,7 +125,7 @@ Saat delete, console harus menampilkan:
 
 ### Modified:
 1. **`public/standalone/js/util.js`**
-   - ✅ Perbaikan fungsi `http()` untuk selalu mengirim header `X-Sipelok-Key`
+   - ✅ Perbaikan fungsi `http()` untuk selalu mengirim header `X-Sijaga-Key`
    - ✅ Header dikirim untuk semua request (GET dan POST)
 
 ### Added:
@@ -134,10 +134,10 @@ Saat delete, console harus menampilkan:
 
 ## 🚀 Cara Update
 
-Salin ulang file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 └── js/
     └── util.js                      ← PERBARUI
 ```
@@ -184,7 +184,7 @@ SELECT COUNT(*) FROM presensi;
 ### Sebelum (Header Hanya untuk POST):
 ```javascript
 if (opts.body) {
-  init.headers["X-Sipelok-Key"] = API_KEY;  // ❌ Hanya POST
+  init.headers["X-Sijaga-Key"] = API_KEY;  // ❌ Hanya POST
 }
 // GET request tidak ada header → error
 ```
@@ -197,7 +197,7 @@ if (opts.body) {
 ### Sesudah (Header untuk Semua Request):
 ```javascript
 // ✅ Selalu kirim API key
-init.headers["X-Sipelok-Key"] = API_KEY;
+init.headers["X-Sijaga-Key"] = API_KEY;
 ```
 
 **Keuntungan:**
@@ -214,19 +214,19 @@ init.headers["X-Sipelok-Key"] = API_KEY;
 
 ### Untuk Admin:
 - Gunakan console browser untuk debugging
-- Periksa apakah header `X-Sipelok-Key` dikirim
+- Periksa apakah header `X-Sijaga-Key` dikirim
 - Verifikasi API key di `config.php` sama dengan di `util.js`
 
 ### Untuk IT:
 - API key harus sama di frontend dan backend
-- Frontend: `const API_KEY = "sipelok-konawe-2024";` di util.js
-- Backend: `const API_KEY = 'sipelok-konawe-2024';` di config.php
+- Frontend: `const API_KEY = "sijaga-konawe-2024";` di util.js
+- Backend: `const API_KEY = 'sijaga-konawe-2024';` di config.php
 - Jika berbeda, ubah salah satu agar sama
 
 ## 🎯 Hasil Akhir
 
 ✅ **Tidak ada lagi error "Kunci API tidak valid"**  
-✅ **Header `X-Sipelok-Key` selalu dikirim untuk semua request**  
+✅ **Header `X-Sijaga-Key` selalu dikirim untuk semua request**  
 ✅ **Delete berfungsi dengan baik**  
 ✅ **Semua operasi terautentikasi**  
 ✅ **Lebih aman**  
@@ -236,10 +236,10 @@ init.headers["X-Sipelok-Key"] = API_KEY;
 ### Langkah 1: Periksa API Key
 ```javascript
 // Di util.js (frontend)
-const API_KEY = "sipelok-konawe-2024";
+const API_KEY = "sijaga-konawe-2024";
 
 // Di config.php (backend)
-const API_KEY = 'sipelok-konawe-2024';
+const API_KEY = 'sijaga-konawe-2024';
 
 // Harus SAMA!
 ```
@@ -251,7 +251,7 @@ const API_KEY = 'sipelok-konawe-2024';
 3. Lakukan delete
 4. Klik request "delete"
 5. Lihat "Request Headers":
-   ✅ Harus ada: X-Sipelok-Key: sipelok-konawe-2024
+   ✅ Harus ada: X-Sijaga-Key: sijaga-konawe-2024
 ```
 
 ### Langkah 3: Periksa Error Log PHP
@@ -263,4 +263,4 @@ Cari: "Kunci API tidak valid"
 
 ---
 
-**Catatan**: Perbaikan ini memastikan bahwa semua request (GET dan POST) mengirim header `X-Sipelok-Key`, sehingga tidak ada lagi error "Kunci API tidak valid" saat melakukan delete atau operasi lainnya.
+**Catatan**: Perbaikan ini memastikan bahwa semua request (GET dan POST) mengirim header `X-Sijaga-Key`, sehingga tidak ada lagi error "Kunci API tidak valid" saat melakukan delete atau operasi lainnya.

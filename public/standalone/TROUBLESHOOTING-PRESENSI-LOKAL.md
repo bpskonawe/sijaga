@@ -111,7 +111,7 @@ function httpWithProgress(action, opts, onProgress) {
 ### Langkah 1: Buka Halaman Debug
 
 ```
-http://localhost/sipelok/debug-presensi.html
+http://localhost/sijaga/debug-presensi.html
 ```
 
 ### Langkah 2: Periksa Mode & Koneksi
@@ -149,7 +149,7 @@ Total records in S.records: 150
 Mode: db
 Sending only new record to server...
 === httpWithProgress START ===
-URL: http://localhost/sipelok/api/api.php?action=save&table=records
+URL: http://localhost/sijaga/api/api.php?action=save&table=records
 Action: save
 Table: records
 Body size: 245 bytes
@@ -171,9 +171,9 @@ Record ID: abc123
 Mode: db
 Sending only new record to server...
 === httpWithProgress START ===
-URL: http://localhost/sipelok/api/api.php?action=save&table=records
+URL: http://localhost/sijaga/api/api.php?action=save&table=records
 === httpWithProgress NETWORK ERROR ===
-URL: http://localhost/sipelok/api/api.php?action=save&table=records
+URL: http://localhost/sijaga/api/api.php?action=save&table=records
 ReadyState: 4
 Status: 0
 ✗ Error: Network error - tidak dapat terhubung ke server
@@ -190,14 +190,14 @@ Status: 0
 3. Jika tidak, klik Start
 
 # Test koneksi
-http://localhost/sipelok/api/api.php?action=ping
+http://localhost/sijaga/api/api.php?action=ping
 ```
 
 **Hasil yang Diharapkan:**
 ```json
 {
   "ok": true,
-  "db": "sipelok",
+  "db": "sijaga",
   "version": "10.4.28-MariaDB",
   "waktu": "2024-01-15T10:30:00+08:00"
 }
@@ -213,11 +213,11 @@ C:\xampp\php\logs\php_error_log
 /var/log/php_errors.log
 ```
 
-Cari error yang mengandung "SIPELOK":
+Cari error yang mengandung "SIJAGA":
 ```
-[15-Jan-2024 10:30:00] SIPELOK: Saving 1 rows to table: records
-[15-Jan-2024 10:30:00] SIPELOK: Inserted new record ID: abc123
-[15-Jan-2024 10:30:00] SIPELOK: Successfully saved 1 records
+[15-Jan-2024 10:30:00] SIJAGA: Saving 1 rows to table: records
+[15-Jan-2024 10:30:00] SIJAGA: Inserted new record ID: abc123
+[15-Jan-2024 10:30:00] SIJAGA: Successfully saved 1 records
 ```
 
 ### Solusi 3: Periksa Database
@@ -250,7 +250,7 @@ Jika data ada di localStorage tapi tidak di database:
 
 ```sql
 -- Backup dulu!
-mysqldump -u root sipelok > backup.sql
+mysqldump -u root sijaga > backup.sql
 
 -- Hapus semua presensi
 DELETE FROM presensi;
@@ -263,7 +263,7 @@ ALTER TABLE presensi AUTO_INCREMENT = 1;
 
 - [ ] Server PHP berjalan (Apache aktif)
 - [ ] Database MySQL berjalan
-- [ ] Database `sipelok` sudah dibuat
+- [ ] Database `sijaga` sudah dibuat
 - [ ] Tabel `presensi` sudah ada
 - [ ] File `api/api.php` adalah versi terbaru
 - [ ] File `js/util.js` adalah versi terbaru
@@ -283,7 +283,7 @@ Record ID: abc123
 Mode: db
 Sending only new record to server...
 === httpWithProgress START ===
-URL: http://localhost/sipelok/api/api.php?action=save&table=records
+URL: http://localhost/sijaga/api/api.php?action=save&table=records
 Body size: 245 bytes
 Upload progress: 100% 245/245
 === httpWithProgress RESPONSE ===
@@ -295,9 +295,9 @@ Response: {"ok":true,"rows":1}
 
 **PHP Error Log:**
 ```
-SIPELOK: Saving 1 rows to table: records
-SIPELOK: Inserted new record ID: abc123
-SIPELOK: Successfully saved 1 records
+SIJAGA: Saving 1 rows to table: records
+SIJAGA: Inserted new record ID: abc123
+SIJAGA: Successfully saved 1 records
 ```
 
 **Database:**
@@ -321,7 +321,7 @@ Record ID: abc123
 Mode: db
 Sending only new record to server...
 === httpWithProgress START ===
-URL: http://localhost/sipelok/api/api.php?action=save&table=records
+URL: http://localhost/sijaga/api/api.php?action=save&table=records
 === httpWithProgress NETWORK ERROR ===
 ✗ Error: Network error - tidak dapat terhubung ke server
 ```
@@ -384,10 +384,10 @@ Periksa console browser (F12) untuk detail.
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 ├── js/
 │   └── util.js              ← PERBARUI
 ├── debug-presensi.html      ← BARU

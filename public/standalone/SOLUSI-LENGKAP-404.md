@@ -48,7 +48,7 @@ Ctrl + F5
 Saya sudah membuat halaman diagnostik khusus untuk Anda:
 
 ```
-https://sipelok.bpskabkonawe.com/standalone/diagnostic.html
+https://sijaga.bpskabkonawe.com/standalone/diagnostic.html
 ```
 
 **Halaman ini akan:**
@@ -89,14 +89,14 @@ https://sipelok.bpskabkonawe.com/standalone/diagnostic.html
 
 Buka URL ini langsung di browser:
 ```
-https://sipelok.bpskabkonawe.com/standalone/api/api.php?action=ping
+https://sijaga.bpskabkonawe.com/standalone/api/api.php?action=ping
 ```
 
 **Hasil yang Diharapkan:**
 ```json
 {
   "ok": true,
-  "db": "sipelok",
+  "db": "sijaga",
   "version": "10.4.28-MariaDB",
   "waktu": "2024-01-15T10:30:00+08:00"
 }
@@ -131,7 +131,7 @@ function getApiPath() {
 **Opsi 2: Full URL**
 ```javascript
 function getApiPath() {
-  return 'https://sipelok.bpskabkonawe.com/standalone/api/api.php';
+  return 'https://sijaga.bpskabkonawe.com/standalone/api/api.php';
 }
 ```
 
@@ -199,8 +199,8 @@ Gunakan checklist ini:
 - [ ] **Permission file benar** (644 untuk file, 755 untuk folder)
 - [ ] **Test manual** `api.php?action=ping` mengembalikan JSON
 - [ ] **Database MySQL berjalan**
-- [ ] **Database `sipelok` sudah dibuat**
-- [ ] **Tabel sudah diimpor** dari `database/sipelok.sql`
+- [ ] **Database `sijaga` sudah dibuat**
+- [ ] **Tabel sudah diimpor** dari `database/sijaga.sql`
 
 ## 📊 Kemungkinan Struktur Server
 
@@ -227,13 +227,13 @@ Gunakan checklist ini:
 
 ### Struktur 3: Subdomain
 ```
-/public_html/sipelok/
+/public_html/sijaga/
 ├── index.html
 ├── presensi.html
 └── api/
     └── api.php
 ```
-**URL:** `https://sipelok.domain.com/api/api.php`
+**URL:** `https://sijaga.domain.com/api/api.php`
 
 ## 💡 Solusi Cepat
 
@@ -255,7 +255,7 @@ Ctrl + F5 (hard refresh)
 ### 3. Test dengan diagnostic.html
 ```
 1. Upload diagnostic.html
-2. Buka: https://sipelok.bpskabkonawe.com/standalone/diagnostic.html
+2. Buka: https://sijaga.bpskabkonawe.com/standalone/diagnostic.html
 3. Klik "Jalankan Semua Test"
 4. Lihat hasilnya
 ```
@@ -312,7 +312,7 @@ Kumpulkan informasi berikut:
    - Error log PHP
 
 4. **Test Manual**
-   - Buka `https://sipelok.bpskabkonawe.com/standalone/api/api.php?action=ping`
+   - Buka `https://sijaga.bpskabkonawe.com/standalone/api/api.php?action=ping`
    - Screenshot hasilnya
 
 Kirim informasi di atas untuk troubleshooting lebih lanjut.

@@ -256,11 +256,11 @@ Saving to database...
 
 ### Backend (PHP Error Log):
 ```
-SIPELOK: Processing 184 jadwal rows
-SIPELOK: Inserted jadwal abc123 for 2024-01-01 shift 1 urutan 1
-SIPELOK: Inserted jadwal def456 for 2024-01-01 shift 1 urutan 2
+SIJAGA: Processing 184 jadwal rows
+SIJAGA: Inserted jadwal abc123 for 2024-01-01 shift 1 urutan 1
+SIJAGA: Inserted jadwal def456 for 2024-01-01 shift 1 urutan 2
 ...
-SIPELOK: Jadwal processing complete - Updated: 0, Inserted: 184, Errors: 0
+SIJAGA: Jadwal processing complete - Updated: 0, Inserted: 184, Errors: 0
 ```
 
 ## 📁 File yang Diperbaiki
@@ -296,7 +296,7 @@ SIPELOK: Jadwal processing complete - Updated: 0, Inserted: 184, Errors: 0
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 - `js/util.js`
 - `api/api.php`
 - `admin.html`

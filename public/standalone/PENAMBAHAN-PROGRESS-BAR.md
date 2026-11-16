@@ -157,7 +157,7 @@ function httpWithProgress(action, opts, onProgress) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("X-Sipelok-Key", API_KEY);
+    xhr.setRequestHeader("X-Sijaga-Key", API_KEY);
     
     // Track upload progress
     xhr.upload.onprogress = function(e) {
@@ -327,10 +327,10 @@ function httpWithProgress(action, opts, onProgress) {
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 ├── presensi.html    ← PERBARUI
 └── js/
     └── util.js      ← PERBARUI

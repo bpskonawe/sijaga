@@ -1,12 +1,12 @@
 /* ============================================================
-   SIPELOK — util.js  (dipakai semua halaman, tanpa npm)
-   Versi: 2.0.0 - Fixed 404 HTML Detection
+   SIJAGA — util.js  (dipakai semua halaman, tanpa npm)
+   Versi: 2.1.0
    Dua mode:  db  -> PHP+MySQL   |   local -> localStorage (demo)
    ============================================================ */
 "use strict";
 
-const UTIL_VERSION = "2.0.0";
-console.log("📦 SIPELOK util.js version:", UTIL_VERSION);
+const UTIL_VERSION = "2.1.0";
+console.log("📦 SIJAGA util.js version:", UTIL_VERSION);
 
 // Auto-detect API path berdasarkan lokasi halaman
 function getApiPath() {
@@ -17,26 +17,26 @@ function getApiPath() {
     'api/api.php',           // Struktur standar
     '../api/api.php',        // Jika di subfolder
     '/api/api.php',          // Absolute path dari root
-    '/sipelok/api/api.php',  // Jika di subfolder sipelok
+    '/sijaga/api/api.php',  // Jika di subfolder sijaga
   ];
   
   // Gunakan path relatif dari lokasi saat ini
-  // Jika halaman di /sipelok/presensi.html, API di /sipelok/api/api.php
+  // Jika halaman di /sijaga/presensi.html, API di /sijaga/api/api.php
   const basePath = path.substring(0, path.lastIndexOf('/') + 1);
   return basePath + 'api/api.php';
 }
 
 const API = getApiPath();
-const API_KEY = "sipelok-konawe-2024";
-const ADMIN_SALT = "sipelokadmin";
+const API_KEY = "sijaga-konawe-2024";
+const ADMIN_SALT = "sijagaadmin";
 
 console.log("API Path:", API);
 
 const LS = {
-  petugas: "sipelok.petugas", records: "sipelok.records", jadwal: "sipelok.jadwal",
-  accounts: "sipelok.accounts", seeded: "sipelok.seeded",
+  petugas: "sijaga.petugas", records: "sijaga.records", jadwal: "sijaga.jadwal",
+  accounts: "sijaga.accounts", seeded: "sijaga.seeded",
 };
-const AUTH_KEY = "sipelok.auth";
+const AUTH_KEY = "sijaga.auth";
 
 const S = { petugas: [], records: [], jadwal: [], accounts: [] };
 let MODE = "local";
@@ -67,7 +67,7 @@ function djb2(str) {
   for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0;
   return (h >>> 0).toString(36);
 }
-function hashPw(pw, salt) { return djb2(salt + "::sipelok::" + pw); }
+function hashPw(pw, salt) { return djb2(salt + "::sijaga::" + pw); }
 function newSalt() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
 
 /* ---------------- localStorage ---------------- */
@@ -83,7 +83,7 @@ async function http(action, opts) {
   const init = { method: opts.body ? "POST" : "GET", headers: {} };
   
   // Selalu kirim API key untuk semua request (GET dan POST)
-  init.headers["X-Sipelok-Key"] = API_KEY;
+  init.headers["X-Sijaga-Key"] = API_KEY;
   
   if (opts.body) {
     init.headers["Content-Type"] = "application/json";
@@ -196,7 +196,7 @@ function httpWithProgress(action, opts, onProgress) {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.setRequestHeader("X-Sipelok-Key", API_KEY);
+      xhr.setRequestHeader("X-Sijaga-Key", API_KEY);
       
       // Track upload progress
       xhr.upload.onprogress = function(e) {
@@ -833,7 +833,7 @@ function deleteRecords(ids) {
 /* ---------------- akun / auth ---------------- */
 function verifyPw(acc, pw) {
   if (acc.salt && acc.hash === hashPw(pw, acc.salt)) return true;
-  if (!acc.salt && acc.hash === djb2("sipelok:" + pw + ":konawe")) return true;
+  if (!acc.salt && acc.hash === djb2("sijaga:" + pw + ":konawe")) return true;
   return false;
 }
 function ensureAdmin() {

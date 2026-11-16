@@ -1,6 +1,6 @@
 <?php
 /* =====================================================================
-   SIPELOK — API PHP + MySQL (SATU berkas, tanpa framework, tanpa npm)
+   SIJAGA — API PHP + MySQL (SATU berkas, tanpa framework, tanpa npm)
    ---------------------------------------------------------------------
    Aksi (?action=...):
      ping      cek hidup API + database
@@ -9,13 +9,13 @@
      save      simpan baris (?table=...) — UPSERT
      delete    hapus baris (?table=...&id=...) — id presensi boleh banyak (koma)
      clear     kosongkan tabel (?table=...)
-   Permintaan ubah-data wajib menyertakan header X-Sipelok-Key = API_KEY.
+   Permintaan ubah-data wajib menyertakan header X-Sijaga-Key = API_KEY.
    ===================================================================== */
 require __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type, X-Sipelok-Key');
+header('Access-Control-Allow-Headers: Content-Type, X-Sijaga-Key');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') { http_response_code(204); exit; }
 
@@ -34,12 +34,12 @@ function djb2(string $s): string {
   }
   return base_convert((string) $h, 10, 36);
 }
-const ADMIN_SALT = 'sipelokadmin';
+const ADMIN_SALT = 'sijagaadmin';
 
 $action = trim((string) ($_GET['action'] ?? ''));
 if (in_array($action, ['save', 'delete', 'clear'], true)
-    && (string) ($_SERVER['HTTP_X_SIPELOK_KEY'] ?? '') !== API_KEY) {
-  fail('Kunci API tidak valid (X-Sipelok-Key)', 403);
+    && (string) ($_SERVER['HTTP_X_SIJAGA_KEY'] ?? '') !== API_KEY) {
+  fail('Kunci API tidak valid (X-Sijaga-Key)', 403);
 }
 
 try {
@@ -49,13 +49,13 @@ try {
     [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]
   );
 } catch (Throwable $e) {
-  out(['ok' => false, 'error' => 'Koneksi MySQL gagal. Pastikan MySQL menyala dan database "sipelok" sudah diimpor (database/sipelok.sql).']);
+  out(['ok' => false, 'error' => 'Koneksi MySQL gagal. Pastikan MySQL menyala dan database "sijaga" sudah diimpor (database/sijaga.sql).']);
 }
 
 function seed_defaults(PDO $db): void {
   $ada = $db->query("SELECT COUNT(*) FROM akun WHERE peran = 'admin'")->fetchColumn();
   if ((int) $ada === 0) {
-    $hash = djb2(ADMIN_SALT . '::sipelok::bpskonawe');
+    $hash = djb2(ADMIN_SALT . '::sijaga::bpskonawe');
     $db->prepare('INSERT INTO akun (username, nama, peran, hash, salt, dibuat) VALUES (?,?,?,?,?,NOW())
                   ON DUPLICATE KEY UPDATE peran="admin", hash=VALUES(hash), salt=VALUES(salt)')
        ->execute(['admin', 'Administrator', 'admin', $hash, ADMIN_SALT]);
@@ -70,12 +70,12 @@ function simpan_foto(?string $v, string $id, string $suf): ?string {
   
   // Cek apakah ini data URL (format: data:image/jpeg;base64,...)
   if (strpos($v, 'data:image') === 0) {
-    error_log("SIPELOK Foto: Memproses data URL untuk ID $id, panjang: " . strlen($v));
+    error_log("SIJAGA Foto: Memproses data URL untuk ID $id, panjang: " . strlen($v));
     
     // Extract base64 data setelah koma
     $pos = strpos($v, ',');
     if ($pos === false) {
-      error_log("SIPELOK Foto: Tidak ditemukan koma dalam data URL");
+      error_log("SIJAGA Foto: Tidak ditemukan koma dalam data URL");
       return null;
     }
     
@@ -83,50 +83,50 @@ function simpan_foto(?string $v, string $id, string $suf): ?string {
     $bin = base64_decode($base64Data, true);
     
     if ($bin === false) {
-      error_log("SIPELOK Foto: Gagal decode base64 untuk ID $id");
+      error_log("SIJAGA Foto: Gagal decode base64 untuk ID $id");
       return null;
     }
     
-    error_log("SIPELOK Foto: Berhasil decode base64, ukuran: " . strlen($bin) . " bytes");
+    error_log("SIJAGA Foto: Berhasil decode base64, ukuran: " . strlen($bin) . " bytes");
     
     $dir = __DIR__ . '/uploads';
     
     // Cek apakah folder ada dan writable
     if (!is_dir($dir)) {
-      error_log("SIPELOK Foto: Folder uploads tidak ada, mencoba membuat: $dir");
+      error_log("SIJAGA Foto: Folder uploads tidak ada, mencoba membuat: $dir");
       if (!@mkdir($dir, 0777, true)) {
-        error_log("SIPELOK Foto: GAGAL membuat folder uploads: $dir");
+        error_log("SIJAGA Foto: GAGAL membuat folder uploads: $dir");
         return null;
       }
-      error_log("SIPELOK Foto: Berhasil membuat folder uploads");
+      error_log("SIJAGA Foto: Berhasil membuat folder uploads");
     }
     
     // Cek permission
     if (!is_writable($dir)) {
-      error_log("SIPELOK Foto: Folder uploads tidak writable: $dir");
+      error_log("SIJAGA Foto: Folder uploads tidak writable: $dir");
       return null;
     }
     
     $nama = preg_replace('/[^A-Za-z0-9_-]/', '', $id) . '_' . $suf . '.jpg';
     $path = $dir . '/' . $nama;
     
-    error_log("SIPELOK Foto: Menyimpan ke: $path");
+    error_log("SIJAGA Foto: Menyimpan ke: $path");
     
     $result = @file_put_contents($path, $bin);
     
     if ($result === false) {
-      error_log("SIPELOK Foto: GAGAL menyimpan file: $path");
+      error_log("SIJAGA Foto: GAGAL menyimpan file: $path");
       return null;
     }
     
-    error_log("SIPELOK Foto: Berhasil menyimpan file: $path (" . $result . " bytes)");
+    error_log("SIJAGA Foto: Berhasil menyimpan file: $path (" . $result . " bytes)");
     
     // Return path relatif untuk diakses via web
     return 'api/uploads/' . $nama;
   }
   
   // Jika bukan data URL, return as-is (mungkin sudah berupa path)
-  error_log("SIPELOK Foto: Bukan data URL, return as-is: $v");
+  error_log("SIJAGA Foto: Bukan data URL, return as-is: $v");
   return $v;
 }
 
@@ -171,13 +171,13 @@ try {
       $rows  = json_decode($raw_input ?: '[]', true);
       
       if (!is_array($rows)) {
-        error_log("SIPELOK: Invalid JSON for table $table: " . substr($raw_input, 0, 200));
+        error_log("SIJAGA: Invalid JSON for table $table: " . substr($raw_input, 0, 200));
         fail('Isi permintaan tidak valid: ' . json_last_error_msg());
       }
       
       if (count($rows) > 8000) fail('Terlalu banyak baris');
       
-      error_log("SIPELOK: Saving " . count($rows) . " rows to table: $table");
+      error_log("SIJAGA: Saving " . count($rows) . " rows to table: $table");
       
       try {
         $db->beginTransaction();
@@ -246,7 +246,7 @@ try {
             }
           }
         } elseif ($table === 'jadwal') {
-          error_log("SIPELOK: Processing " . count($rows) . " jadwal rows");
+          error_log("SIJAGA: Processing " . count($rows) . " jadwal rows");
           
           // Gunakan INSERT ... ON DUPLICATE KEY UPDATE untuk menghindari duplicate entry error
           $upsert = $db->prepare('
@@ -268,7 +268,7 @@ try {
               $pid = $r['petugasId'] ?? '';
               
               if (empty($id) || empty($tgl) || empty($pid)) {
-                error_log("SIPELOK: Skipping invalid jadwal row $index: id=$id, tgl=$tgl, pid=$pid");
+                error_log("SIJAGA: Skipping invalid jadwal row $index: id=$id, tgl=$tgl, pid=$pid");
                 $errors++;
                 continue;
               }
@@ -282,16 +282,16 @@ try {
               } else {
                 $inserted++;
                 if ($inserted <= 5 || $inserted % 50 === 0) {
-                  error_log("SIPELOK: Inserted jadwal $id for $tgl shift $sh urutan $ur");
+                  error_log("SIJAGA: Inserted jadwal $id for $tgl shift $sh urutan $ur");
                 }
               }
             } catch (Exception $e) {
-              error_log("SIPELOK: Error processing jadwal row $index: " . $e->getMessage());
+              error_log("SIJAGA: Error processing jadwal row $index: " . $e->getMessage());
               $errors++;
             }
           }
           
-          error_log("SIPELOK: Jadwal processing complete - Updated: $updated, Inserted: $inserted, Errors: $errors");
+          error_log("SIJAGA: Jadwal processing complete - Updated: $updated, Inserted: $inserted, Errors: $errors");
         } elseif ($table === 'accounts') {
           $db->exec('DELETE FROM akun');
           $in = $db->prepare('INSERT INTO akun (username, nama, peran, hash, salt, dibuat) VALUES (?,?,?,?,?,?)');
@@ -305,7 +305,7 @@ try {
         out(['ok' => true, 'rows' => count($rows)]);
       } catch (Exception $e) {
         $db->rollBack();
-        error_log("SIPELOK: Database error: " . $e->getMessage());
+        error_log("SIJAGA: Database error: " . $e->getMessage());
         fail('Database error: ' . $e->getMessage());
       }
       break;

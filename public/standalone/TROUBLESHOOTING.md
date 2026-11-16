@@ -17,12 +17,12 @@ Aplikasi berjalan dalam mode LocalStorage (demo) karena tidak dapat terhubung ke
 
 **Solusi:**
 1. Pastikan XAMPP berjalan (Apache dan MySQL aktif)
-2. Pastikan folder `standalone` ada di `C:\xampp\htdocs\sipelok\`
-3. Akses aplikasi via `http://localhost/sipelok/` (bukan buka file HTML langsung)
-4. Buka `http://localhost/sipelok/debug.html` untuk memeriksa mode
+2. Pastikan folder `standalone` ada di `C:\xampp\htdocs\sijaga\`
+3. Akses aplikasi via `http://localhost/sijaga/` (bukan buka file HTML langsung)
+4. Buka `http://localhost/sijaga/debug.html` untuk memeriksa mode
 5. Jika masih "Mode Demo", periksa:
    - Apakah MySQL berjalan di XAMPP Control Panel?
-   - Apakah database `sipelok` sudah dibuat?
+   - Apakah database `sijaga` sudah dibuat?
    - Apakah file `api/config.php` sudah dikonfigurasi dengan benar?
 
 ### 2. Database Tidak Terhubung
@@ -35,15 +35,15 @@ Aplikasi berjalan dalam mode LocalStorage (demo) karena tidak dapat terhubung ke
 Koneksi ke database MySQL gagal atau konfigurasi salah.
 
 **Solusi:**
-1. Buka `http://localhost/sipelok/api/api.php?action=ping`
+1. Buka `http://localhost/sijaga/api/api.php?action=ping`
 2. Jika muncul error, periksa `api/config.php`:
    ```php
    const DB_HOST = '127.0.0.1';
-   const DB_NAME = 'sipelok';
+   const DB_NAME = 'sijaga';
    const DB_USER = 'root';
    const DB_PASS = ''; // Sesuaikan dengan password MySQL Anda
    ```
-3. Pastikan database `sipelok` sudah dibuat dan tabel sudah diimpor
+3. Pastikan database `sijaga` sudah dibuat dan tabel sudah diimpor
 4. Cek error log di `C:\xampp\php\logs\php_error_log`
 
 ### 3. Race Condition (Data Tertimpa)
@@ -93,7 +93,7 @@ LocalStorage browser penuh (limit ~5-10MB).
 ## Langkah Debugging
 
 ### 1. Periksa Mode Penyimpanan
-Buka `http://localhost/sipelok/debug.html`
+Buka `http://localhost/sijaga/debug.html`
 - Lihat bagian "Status Mode Penyimpanan"
 - Jika "Mode Demo", berarti tidak terhubung ke database
 
@@ -117,16 +117,16 @@ Di halaman `debug.html`:
 ### 5. Cek Error Log PHP
 Lokasi: `C:\xampp\php\logs\php_error_log`
 - Buka file ini dengan text editor
-- Cari error terkait SIPELOK
+- Cari error terkait SIJAGA
 - Screenshot error dan berikan ke developer
 
 ## Checklist Troubleshooting
 
 - [ ] XAMPP Apache dan MySQL berjalan
-- [ ] Folder `standalone` ada di `htdocs/sipelok/`
-- [ ] Database `sipelok` sudah dibuat
-- [ ] Tabel sudah diimpor dari `database/sipelok.sql`
-- [ ] Akses via `http://localhost/sipelok/` (bukan file://)
+- [ ] Folder `standalone` ada di `htdocs/sijaga/`
+- [ ] Database `sijaga` sudah dibuat
+- [ ] Tabel sudah diimpor dari `database/sijaga.sql`
+- [ ] Akses via `http://localhost/sijaga/` (bukan file://)
 - [ ] Badge menunjukkan "MySQL Aktif" (bukan "Mode Demo")
 - [ ] Folder `api/uploads/` ada dan writable
 - [ ] Console browser tidak ada error merah

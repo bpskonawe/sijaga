@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="SIJAGA">
+  <title>SIJAGA — Sistem Informasi Jadwal Petugas Pelayanan</title>
   <rect width="128" height="128" rx="28" fill="#0c2431"/>
-  <rect x="14" y="14" width="100" height="100" rx="20" fill="none" stroke="#e2571b" stroke-width="4" opacity="0.35"/>
-  <g fill="none" stroke="#f2ede4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="30" y="34" width="68" height="56" rx="12"/>
-    <path d="M30 52h68"/>
-    <path d="M46 76V64"/>
-    <path d="M60 76V58"/>
-    <path d="M74 76v-8"/>
+  <!-- perisai (jaga) -->
+  <path d="M64 17 103 30v31c0 25-16 43-39 52-23-9-39-27-39-52V30z" fill="#f2691f"/>
+  <path d="M64 17 103 30v31c0 25-16 43-39 52z" fill="#e2571b"/>
+  <!-- cincin kalender (jadwal) -->
+  <g fill="none" stroke="#f2ede4" stroke-width="6" stroke-linecap="round">
+    <path d="M47 21v13M81 21v13"/>
   </g>
-  <circle cx="88" cy="43" r="3.4" fill="#e2571b"/>
+  <!-- jam (waktu tugas) -->
+  <circle cx="64" cy="66" r="23" fill="#f2ede4"/>
+  <path d="M64 52v14l10 7" fill="none" stroke="#0c2431" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

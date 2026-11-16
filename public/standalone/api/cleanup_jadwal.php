@@ -1,6 +1,6 @@
 <?php
 /* =====================================================================
-   SIPELOK — Cleanup Jadwal Duplikat
+   SIJAGA — Cleanup Jadwal Duplikat
    ---------------------------------------------------------------------
    Endpoint untuk membersihkan jadwal duplikat dari database.
    Hanya perlu dipanggil sekali untuk membersihkan data lama.
@@ -36,11 +36,11 @@ try {
 }
 
 try {
-    error_log("SIPELOK Cleanup: Starting duplicate cleanup");
+    error_log("SIJAGA Cleanup: Starting duplicate cleanup");
     
     // Hitung total baris sebelum cleanup
     $totalBefore = $db->query('SELECT COUNT(*) FROM jadwal')->fetchColumn();
-    error_log("SIPELOK Cleanup: Total rows before: $totalBefore");
+    error_log("SIJAGA Cleanup: Total rows before: $totalBefore");
     
     // Cari dan hapus duplikat berdasarkan (tanggal, shift, urutan)
     // Simpan yang pertama (MIN id), hapus yang lain
@@ -61,11 +61,11 @@ try {
     $stmt->execute();
     $deleted = $stmt->rowCount();
     
-    error_log("SIPELOK Cleanup: Deleted $deleted duplicate rows");
+    error_log("SIJAGA Cleanup: Deleted $deleted duplicate rows");
     
     // Hitung total baris setelah cleanup
     $totalAfter = $db->query('SELECT COUNT(*) FROM jadwal')->fetchColumn();
-    error_log("SIPELOK Cleanup: Total rows after: $totalAfter");
+    error_log("SIJAGA Cleanup: Total rows after: $totalAfter");
     
     // Juga bersihkan duplikat berdasarkan ID (jika ada)
     $deleteIdQuery = '
@@ -82,9 +82,9 @@ try {
         $stmt2 = $db->prepare($deleteIdQuery);
         $stmt2->execute();
         $deletedById = $stmt2->rowCount();
-        error_log("SIPELOK Cleanup: Deleted $deletedById duplicate ID rows");
+        error_log("SIJAGA Cleanup: Deleted $deletedById duplicate ID rows");
     } catch (Exception $e) {
-        error_log("SIPELOK Cleanup: No duplicate IDs found or error: " . $e->getMessage());
+        error_log("SIJAGA Cleanup: No duplicate IDs found or error: " . $e->getMessage());
         $deletedById = 0;
     }
     
@@ -96,10 +96,10 @@ try {
         'message' => "Berhasil membersihkan $deleted duplikat (tanggal,shift,urutan) dan $deletedById duplikat (id)"
     ]);
     
-    error_log("SIPELOK Cleanup: Complete");
+    error_log("SIJAGA Cleanup: Complete");
     
 } catch (Exception $e) {
-    error_log("SIPELOK Cleanup Error: " . $e->getMessage());
+    error_log("SIJAGA Cleanup Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
 }
