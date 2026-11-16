@@ -1,11 +1,11 @@
 -- ============================================================
---  SIPELOK — Presensi Piket Loket Pelayanan BPS Kab. Konawe
+--  SIJAGA — Sistem Informasi Jadwal Petugas Pelayanan · BPS Kab. Konawe
 --  Skema MySQL · impor lewat phpMyAdmin (menu Import)
 --  Tanpa npm — cukup PHP + MySQL (XAMPP)
 -- ============================================================
-CREATE DATABASE IF NOT EXISTS sipelok
+CREATE DATABASE IF NOT EXISTS sijaga
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE sipelok;
+USE sijaga;
 
 CREATE TABLE IF NOT EXISTS petugas (
   id      VARCHAR(40)  PRIMARY KEY,
@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS presensi (
   foto_keluar VARCHAR(255) NULL,
   updated     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_tanggal (tanggal),
-  INDEX idx_petugas (petugas_id)
+  INDEX idx_petugas (petugas_id),
+  -- satu catatan per petugas per shift per hari (mencegah presensi ganda)
+  UNIQUE KEY uq_presensi (tanggal, shift, petugas_id)
 ) ENGINE=InnoDB;
 
 -- Jadwal piket PER BULAN: setiap (tanggal, shift) diisi 4 petugas.

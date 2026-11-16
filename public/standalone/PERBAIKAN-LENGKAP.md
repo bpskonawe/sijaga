@@ -313,7 +313,7 @@ window.saveJadwalTanggal = function(tanggal) {
 2. Periksa error log PHP
 3. Pastikan `MODE === "db"` (bukan "local")
 4. Pastikan API PHP berjalan dengan benar
-5. Test dengan `http://localhost/sipelok/api/api.php?action=ping`
+5. Test dengan `http://localhost/sijaga/api/api.php?action=ping`
 
 ---
 

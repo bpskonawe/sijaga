@@ -1,18 +1,20 @@
 ============================================================
- SIPELOK — Presensi Piket Loket Pelayanan BPS Kab. Konawe
+ SIJAGA — Sistem Informasi Jadwal Petugas Pelayanan
+ BPS Kabupaten Konawe · presensi & jadwal piket loket pelayanan
  Murni HTML + CSS + JS + PHP + MySQL · TANPA npm
 ============================================================
 
 INSTALASI SINGKAT (±10 menit)
  1. Pasang XAMPP, jalankan Apache + MySQL.
- 2. Salin SELURUH folder ini ke:  C:\xampp\htdocs\sipelok
+ 2. Salin SELURUH folder ini ke:  C:\xampp\htdocs\sijaga
  3. Buka http://localhost/phpmyadmin -> Import ->
-    pilih file  database\sipelok.sql  -> Go.
+    pilih file  database\sijaga.sql  -> Go.
  4. (Bila perlu) sesuaikan api\config.php.
     Bawaan XAMPP: root, sandi kosong -> langsung cocok.
- 5. Uji:  http://localhost/sipelok/api/api.php?action=ping
+ 5. Uji:  http://localhost/sijaga/api/api.php?action=ping
     harus tampil "ok":true
- 6. Buka  http://localhost/sipelok/
+ 6. Buka  http://localhost/sijaga/
+ (Nama folder boleh diganti; alamat URL mengikuti nama folder.)
 
 AKUN ADMIN BAWAAN
     nama pengguna : admin
@@ -21,7 +23,7 @@ AKUN ADMIN BAWAAN
 
 AKSES DARI HP PETUGAS (satu Wi-Fi kantor)
  - Cek IP komputer XAMPP (CMD -> ipconfig), mis. 192.168.1.10
- - HP membuka:  http://192.168.1.10/sipelok/presensi.html
+ - HP membuka:  http://192.168.1.10/sijaga/presensi.html
  - Pilih nama, shift, lalu foto atribut. Shift terdeteksi otomatis.
 
 JIKA TIDAK BISA MASUK ADMIN
@@ -29,6 +31,15 @@ JIKA TIDAK BISA MASUK ADMIN
      DELETE FROM akun;
  lalu muat ulang halaman admin — akun bawaan dibuat ulang
  otomatis oleh api.php.
+
+MEMUTAKHIRKAN DARI VERSI SEBELUMNYA
+ - Database lama yang masih dipakai: jalankan
+   database\migrasi_hapus_duplikat.sql  (pilih database-nya dulu
+   di phpMyAdmin) untuk menghapus presensi ganda dan memasang
+   kunci unik. Aman dijalankan berulang.
+ - Nama database bawaan sekarang "sijaga" (lihat api\config.php).
+ - Akun selain admin perlu dibuat ulang; admin masuk kembali
+   dengan kata sandi bawaan lalu menggantinya.
 
 CATATAN
  - Foto atribut disimpan sebagai berkas di api\uploads\

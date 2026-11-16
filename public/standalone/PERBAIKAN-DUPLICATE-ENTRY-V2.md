@@ -130,7 +130,7 @@ async function testPresensi() {
 
 ### Test 1: Test Presensi Manual
 ```
-1. Buka: http://localhost/sipelok/debug-presensi.html
+1. Buka: http://localhost/sijaga/debug-presensi.html
 2. Klik "Tambah Presensi Test"
 3. Lihat log di console:
    ✅ "Generated UID: [unique-id]"
@@ -141,7 +141,7 @@ async function testPresensi() {
 
 ### Test 2: Test Presensi Berulang
 ```
-1. Buka: http://localhost/sipelok/debug-presensi.html
+1. Buka: http://localhost/sijaga/debug-presensi.html
 2. Klik "Tambah Presensi Test" 5 kali berturut-turut
 3. Lihat log di console:
    ✅ Setiap UID berbeda
@@ -151,7 +151,7 @@ async function testPresensi() {
 
 ### Test 3: Test Presensi via presensi.html
 ```
-1. Buka: http://localhost/sipelok/presensi.html
+1. Buka: http://localhost/sijaga/presensi.html
 2. Pilih nama, shift, ambil foto
 3. Klik "Simpan Presensi"
 4. Lihat progress bar:
@@ -185,10 +185,10 @@ async function testPresensi() {
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 ├── api/
 │   └── api.php                      ← PERBARUI
 ├── js/
@@ -231,14 +231,14 @@ DELETE FROM presensi WHERE id LIKE 'test_%';
 ```
 C:\xampp\php\logs\php_error_log
 
-Cari: "SIPELOK"
+Cari: "SIJAGA"
 ```
 
 **Log yang Diharapkan:**
 ```
-SIPELOK: Processing 1 records rows
-SIPELOK: Inserted new record ID: abc123
-SIPELOK: Records processing complete - Updated: 0, Inserted: 1, Errors: 0
+SIJAGA: Processing 1 records rows
+SIJAGA: Inserted new record ID: abc123
+SIJAGA: Records processing complete - Updated: 0, Inserted: 1, Errors: 0
 ```
 
 ### Langkah 4: Verifikasi Database

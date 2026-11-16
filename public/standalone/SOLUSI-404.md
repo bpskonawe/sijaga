@@ -30,8 +30,8 @@ function getApiPath() {
 ```
 
 **Contoh:**
-- Jika halaman di: `http://domain.com/sipelok/presensi.html`
-- API akan dicari di: `http://domain.com/sipelok/api/api.php`
+- Jika halaman di: `http://domain.com/sijaga/presensi.html`
+- API akan dicari di: `http://domain.com/sijaga/api/api.php`
 
 ### 2. **Error Handling yang Lebih Baik**
 Sekarang error 404 akan menampilkan pesan yang jelas:
@@ -39,7 +39,7 @@ Sekarang error 404 akan menampilkan pesan yang jelas:
 ```
 ✗ File API tidak ditemukan (404)
 
-URL: http://domain.com/sipelok/api/api.php
+URL: http://domain.com/sijaga/api/api.php
 
 Kemungkinan penyebab:
 1. File api/api.php tidak ada di server
@@ -56,7 +56,7 @@ Solusi:
 File baru `test-api.html` untuk mendiagnosis masalah:
 
 ```
-http://yourdomain.com/sipelok/test-api.html
+http://yourdomain.com/sijaga/test-api.html
 ```
 
 ## 🔧 Langkah-Langkah Perbaikan Manual
@@ -66,7 +66,7 @@ http://yourdomain.com/sipelok/test-api.html
 **Struktur yang Benar:**
 ```
 /public_html/ (atau htdocs/)
-└── sipelok/ (atau nama folder Anda)
+└── sijaga/ (atau nama folder Anda)
     ├── index.html
     ├── presensi.html
     ├── admin.html
@@ -85,14 +85,14 @@ http://yourdomain.com/sipelok/test-api.html
 **Cara Memeriksa via cPanel/File Manager:**
 1. Login ke cPanel
 2. Buka File Manager
-3. Navigasi ke folder aplikasi (misal: `public_html/sipelok/`)
+3. Navigasi ke folder aplikasi (misal: `public_html/sijaga/`)
 4. Pastikan folder `api/` ada
 5. Pastikan file `api.php` ada di dalam folder `api/`
 
 ### Langkah 2: Gunakan Halaman Test API
 
 1. Upload file `test-api.html` ke folder aplikasi
-2. Buka di browser: `http://yourdomain.com/sipelok/test-api.html`
+2. Buka di browser: `http://yourdomain.com/sijaga/test-api.html`
 3. Klik **"Jalankan Diagnostik Lengkap"**
 4. Lihat hasilnya:
    - ✅ **Test 1: File Existence Check** → Harus ✓
@@ -116,11 +116,11 @@ Jika folder `api/` tidak ada atau di lokasi yang salah:
 
 1. Via FTP/cPanel File Manager:
    - Upload folder `api/` ke lokasi yang sama dengan file HTML
-   - Pastikan struktur: `sipelok/api/api.php`
+   - Pastikan struktur: `sijaga/api/api.php`
 
 2. Via SSH (jika ada akses):
    ```bash
-   cd /path/to/sipelok
+   cd /path/to/sijaga
    mkdir -p api
    # Upload file api.php dan config.php ke folder api/
    ```
@@ -143,7 +143,7 @@ function getApiPath() {
   return '/api/api.php';
   
   // Contoh 2: Jika API di subfolder tertentu
-  return '/sipelok/api/api.php';
+  return '/sijaga/api/api.php';
   
   // Contoh 3: Jika menggunakan absolute URL
   return 'http://yourdomain.com/api/api.php';
@@ -161,7 +161,7 @@ function getApiPath() {
 
 **Via SSH:**
 ```bash
-cd /path/to/sipelok
+cd /path/to/sijaga
 chmod 644 api/api.php
 chmod 644 api/config.php
 chmod 755 api/uploads/
@@ -199,14 +199,14 @@ tail -f /var/log/apache2/error.log | grep "api.php"
 
 Buka URL ini langsung di browser:
 ```
-http://yourdomain.com/sipelok/api/api.php?action=ping
+http://yourdomain.com/sijaga/api/api.php?action=ping
 ```
 
 **Hasil yang Diharapkan:**
 ```json
 {
   "ok": true,
-  "db": "sipelok",
+  "db": "sijaga",
   "version": "10.4.28-MariaDB",
   "waktu": "2024-01-15T10:30:00+08:00"
 }
@@ -231,15 +231,15 @@ Edit file `api/config.php`:
 ```php
 <?php
 const DB_HOST = 'localhost';      // atau '127.0.0.1'
-const DB_NAME = 'sipelok';        // nama database
+const DB_NAME = 'sijaga';        // nama database
 const DB_USER = 'root';           // username database
 const DB_PASS = '';               // password database (kosongkan jika tidak ada)
-const API_KEY = 'sipelok-konawe-2024';
+const API_KEY = 'sijaga-konawe-2024';
 ```
 
 **Pastikan:**
-- ✅ Database `sipelok` sudah dibuat
-- ✅ Tabel sudah diimpor dari `database/sipelok.sql`
+- ✅ Database `sijaga` sudah dibuat
+- ✅ Tabel sudah diimpor dari `database/sijaga.sql`
 - ✅ Kredensial database benar
 
 ### Langkah 8: Restart Server
@@ -277,7 +277,7 @@ Gunakan checklist ini untuk memastikan semua sudah benar:
 
 - [ ] **Database**
   - [ ] MySQL/MariaDB berjalan
-  - [ ] Database `sipelok` sudah dibuat
+  - [ ] Database `sijaga` sudah dibuat
   - [ ] Tabel sudah diimpor
   - [ ] Kredensial di `config.php` benar
 
@@ -311,7 +311,7 @@ Ctrl + F5 (hard refresh)
 ### 3. Test dengan test-api.html
 ```
 1. Upload test-api.html
-2. Buka: http://yourdomain.com/sipelok/test-api.html
+2. Buka: http://yourdomain.com/sijaga/test-api.html
 3. Klik "Jalankan Diagnostik Lengkap"
 4. Lihat hasilnya
 ```
@@ -342,7 +342,7 @@ Kumpulkan informasi berikut:
    - Error log PHP
 
 4. **Test Manual**
-   - Buka `http://yourdomain.com/sipelok/api/api.php?action=ping`
+   - Buka `http://yourdomain.com/sijaga/api/api.php?action=ping`
    - Screenshot hasilnya
 
 Kirim informasi di atas untuk troubleshooting lebih lanjut.
@@ -373,7 +373,7 @@ Kirim informasi di atas untuk troubleshooting lebih lanjut.
 Salin ulang file-file berikut ke server Anda:
 
 ```
-sipelok/
+sijaga/
 ├── js/
 │   └── util.js              ← PERBARUI
 ├── test-api.html            ← BARU (upload)

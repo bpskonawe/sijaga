@@ -49,18 +49,18 @@ function simpan_foto(?string $v, string $id, string $suf): ?string {
 ```php
 function simpan_foto(?string $v, string $id, string $suf): ?string {
   if (!$v) {
-    error_log("SIPELOK Foto: Data kosong untuk ID $id");
+    error_log("SIJAGA Foto: Data kosong untuk ID $id");
     return null;
   }
   
   // ✅ PERBAIKAN: Cek 'data:image' bukan 'image'
   if (strpos($v, 'data:image') === 0) {
-    error_log("SIPELOK Foto: Memproses data URL untuk ID $id, panjang: " . strlen($v));
+    error_log("SIJAGA Foto: Memproses data URL untuk ID $id, panjang: " . strlen($v));
     
     // Extract base64 data setelah koma
     $pos = strpos($v, ',');
     if ($pos === false) {
-      error_log("SIPELOK Foto: Tidak ditemukan koma dalam data URL");
+      error_log("SIJAGA Foto: Tidak ditemukan koma dalam data URL");
       return null;
     }
     
@@ -68,48 +68,48 @@ function simpan_foto(?string $v, string $id, string $suf): ?string {
     $bin = base64_decode($base64Data, true);
     
     if ($bin === false) {
-      error_log("SIPELOK Foto: Gagal decode base64 untuk ID $id");
+      error_log("SIJAGA Foto: Gagal decode base64 untuk ID $id");
       return null;
     }
     
-    error_log("SIPELOK Foto: Berhasil decode base64, ukuran: " . strlen($bin) . " bytes");
+    error_log("SIJAGA Foto: Berhasil decode base64, ukuran: " . strlen($bin) . " bytes");
     
     $dir = __DIR__ . '/uploads';
     
     // Cek apakah folder ada dan writable
     if (!is_dir($dir)) {
-      error_log("SIPELOK Foto: Folder uploads tidak ada, mencoba membuat: $dir");
+      error_log("SIJAGA Foto: Folder uploads tidak ada, mencoba membuat: $dir");
       if (!@mkdir($dir, 0777, true)) {
-        error_log("SIPELOK Foto: GAGAL membuat folder uploads: $dir");
+        error_log("SIJAGA Foto: GAGAL membuat folder uploads: $dir");
         return null;
       }
-      error_log("SIPELOK Foto: Berhasil membuat folder uploads");
+      error_log("SIJAGA Foto: Berhasil membuat folder uploads");
     }
     
     // Cek permission
     if (!is_writable($dir)) {
-      error_log("SIPELOK Foto: Folder uploads tidak writable: $dir");
+      error_log("SIJAGA Foto: Folder uploads tidak writable: $dir");
       return null;
     }
     
     $nama = preg_replace('/[^A-Za-z0-9_-]/', '', $id) . '_' . $suf . '.jpg';
     $path = $dir . '/' . $nama;
     
-    error_log("SIPELOK Foto: Menyimpan ke: $path");
+    error_log("SIJAGA Foto: Menyimpan ke: $path");
     
     $result = @file_put_contents($path, $bin);
     
     if ($result === false) {
-      error_log("SIPELOK Foto: GAGAL menyimpan file: $path");
+      error_log("SIJAGA Foto: GAGAL menyimpan file: $path");
       return null;
     }
     
-    error_log("SIPELOK Foto: Berhasil menyimpan file: $path (" . $result . " bytes)");
+    error_log("SIJAGA Foto: Berhasil menyimpan file: $path (" . $result . " bytes)");
     
     return 'api/uploads/' . $nama;
   }
   
-  error_log("SIPELOK Foto: Bukan data URL, return as-is: $v");
+  error_log("SIJAGA Foto: Bukan data URL, return as-is: $v");
   return $v;
 }
 ```
@@ -132,7 +132,7 @@ File baru: `test-upload.html`
 - Periksa folder uploads
 
 **Cara Menggunakan**:
-1. Buka: `http://localhost/sipelok/test-upload.html`
+1. Buka: `http://localhost/sijaga/test-upload.html`
 2. Klik "Choose File" → ambil foto
 3. Klik "Upload Foto Test"
 4. Lihat log untuk detail
@@ -171,7 +171,7 @@ File baru: `TROUBLESHOOTING-FOTO.md`
 ## 🧪 Cara Menguji
 
 ### Test 1: Upload via Test Page
-1. Buka: `http://localhost/sipelok/test-upload.html`
+1. Buka: `http://localhost/sijaga/test-upload.html`
 2. Ambil foto dari kamera
 3. Upload
 4. Lihat log:
@@ -180,7 +180,7 @@ File baru: `TROUBLESHOOTING-FOTO.md`
    - ✅ Cek database → `foto_masuk` berisi path (bukan data URL)
 
 ### Test 2: Upload via Presensi
-1. Buka: `http://localhost/sipelok/presensi.html`
+1. Buka: `http://localhost/sijaga/presensi.html`
 2. Pilih nama & shift
 3. Ambil foto
 4. Simpan presensi
@@ -194,9 +194,9 @@ Buka: `C:\xampp\php\logs\php_error_log`
 
 Cari log seperti ini:
 ```
-[15-Jan-2024 10:30:16] SIPELOK Foto: Memproses data URL untuk ID abc123
-[15-Jan-2024 10:30:16] SIPELOK Foto: Berhasil decode base64, ukuran: 245670 bytes
-[15-Jan-2024 10:30:16] SIPELOK Foto: Berhasil menyimpan file: ...\abc123_masuk.jpg
+[15-Jan-2024 10:30:16] SIJAGA Foto: Memproses data URL untuk ID abc123
+[15-Jan-2024 10:30:16] SIJAGA Foto: Berhasil decode base64, ukuran: 245670 bytes
+[15-Jan-2024 10:30:16] SIJAGA Foto: Berhasil menyimpan file: ...\abc123_masuk.jpg
 ```
 
 ## 📁 File yang Diperbaiki/Ditambahkan
@@ -229,10 +229,10 @@ Cari log seperti ini:
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 ├── api/
 │   ├── api.php                    ← PERBARUI
 │   └── uploads/
@@ -250,7 +250,7 @@ Lalu **Ctrl+F5** di browser untuk clear cache.
 
 **Windows**:
 ```
-1. Right-click folder: C:\xampp\htdocs\sipelok\api\uploads
+1. Right-click folder: C:\xampp\htdocs\sijaga\api\uploads
 2. Properties → Security → Edit
 3. Add user: IUSR dan IIS_IUSRS
 4. Full control → OK
@@ -258,7 +258,7 @@ Lalu **Ctrl+F5** di browser untuk clear cache.
 
 **Linux/Mac**:
 ```bash
-cd /path/to/sipelok/api
+cd /path/to/sijaga/api
 chmod -R 755 uploads
 chown -R www-data:www-data uploads
 ```
@@ -267,16 +267,16 @@ chown -R www-data:www-data uploads
 
 ```bash
 # Windows
-type C:\xampp\php\logs\php_error_log | findstr "SIPELOK Foto"
+type C:\xampp\php\logs\php_error_log | findstr "SIJAGA Foto"
 
 # Linux/Mac
-tail -f /var/log/php_errors.log | grep "SIPELOK Foto"
+tail -f /var/log/php_errors.log | grep "SIJAGA Foto"
 ```
 
 ### Langkah 3: Test dengan Test Page
 
 ```
-1. Buka: http://localhost/sipelok/test-upload.html
+1. Buka: http://localhost/sijaga/test-upload.html
 2. Upload foto
 3. Lihat log
 4. Screenshot log jika masih error
@@ -306,11 +306,11 @@ Presensi berhasil disimpan ke database. ID: abc123
 
 **PHP Error Log**:
 ```
-SIPELOK Foto: Memproses data URL untuk ID abc123, panjang: 327556
-SIPELOK Foto: Berhasil decode base64, ukuran: 245670 bytes
-SIPELOK Foto: Menyimpan ke: C:\xampp\htdocs\sipelok\api\uploads/abc123_masuk.jpg
-SIPELOK Foto: Berhasil menyimpan file: ...\abc123_masuk.jpg (245670 bytes)
-SIPELOK: Inserted new record ID: abc123
+SIJAGA Foto: Memproses data URL untuk ID abc123, panjang: 327556
+SIJAGA Foto: Berhasil decode base64, ukuran: 245670 bytes
+SIJAGA Foto: Menyimpan ke: C:\xampp\htdocs\sijaga\api\uploads/abc123_masuk.jpg
+SIJAGA Foto: Berhasil menyimpan file: ...\abc123_masuk.jpg (245670 bytes)
+SIJAGA: Inserted new record ID: abc123
 ```
 
 **Database**:
@@ -335,7 +335,7 @@ Error simpan presensi ke database: ...
 
 **PHP Error Log**:
 ```
-SIPELOK Foto: Folder uploads tidak writable: C:\xampp\htdocs\sipelok\api\uploads
+SIJAGA Foto: Folder uploads tidak writable: C:\xampp\htdocs\sijaga\api\uploads
 ```
 
 **Database**:

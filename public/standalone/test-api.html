@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test Koneksi API - SIPELOK</title>
+  <title>Test Koneksi API - SIJAGA</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230c2431'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52-23-9-39-27-39-52V30z' fill='%23f2691f'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52z' fill='%23e2571b'/%3E%3Cpath d='M47 21v13M81 21v13' fill='none' stroke='%23f2ede4' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='64' cy='66' r='23' fill='%23f2ede4'/%3E%3Cpath d='M64 52v14l10 7' fill='none' stroke='%230c2431' stroke-width='6.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -112,7 +113,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🔧 Test Koneksi API - SIPELOK</h1>
+    <h1>🔧 Test Koneksi API - SIJAGA</h1>
     
     <div class="info-box">
       <strong>ℹ️ Informasi:</strong> Halaman ini akan membantu Anda mendiagnosis masalah koneksi ke API. 
@@ -162,7 +163,7 @@
     }
 
     const API = getApiPath();
-    const API_KEY = "sipelok-konawe-2024";
+    const API_KEY = "sijaga-konawe-2024";
 
     // Display system info
     function displaySystemInfo() {
@@ -200,7 +201,7 @@
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'X-Sipelok-Key': API_KEY
+            'X-Sijaga-Key': API_KEY
           }
         });
 
@@ -279,7 +280,7 @@
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'X-Sipelok-Key': API_KEY
+            'X-Sijaga-Key': API_KEY
           }
         });
 
@@ -319,12 +320,12 @@
             Error: ${error.message}\n\n
             <strong>Kemungkinan penyebab:</strong>\n
             1. Database MySQL tidak berjalan\n
-            2. Database 'sipelok' belum dibuat\n
+            2. Database 'sijaga' belum dibuat\n
             3. Tabel belum diimpor\n
             4. Kredensial database salah di config.php\n\n
             <strong>Solusi:</strong>\n
             - Periksa apakah MySQL berjalan di XAMPP Control Panel\n
-            - Import database/sipelok.sql via phpMyAdmin\n
+            - Import database/sijaga.sql via phpMyAdmin\n
             - Periksa kredensial di api/config.php
           </div>
         `;
@@ -423,7 +424,7 @@
       results.push('<strong>Test 4: API Key Check</strong>');
       try {
         const response = await fetch(API + '?action=ping', {
-          headers: { 'X-Sipelok-Key': 'wrong-key' }
+          headers: { 'X-Sijaga-Key': 'wrong-key' }
         });
         const data = await response.json();
         if (!data.ok && data.error && data.error.includes('Kunci API')) {
@@ -451,7 +452,7 @@
       results.push('');
       results.push('<strong>Jika hanya Bootstrap GAGAL:</strong>');
       results.push('1. Periksa apakah MySQL berjalan');
-      results.push('2. Import database/sipelok.sql via phpMyAdmin');
+      results.push('2. Import database/sijaga.sql via phpMyAdmin');
       results.push('3. Periksa kredensial di api/config.php');
 
       resultDiv.innerHTML = `<div class="result info">${results.join('\n')}</div>`;

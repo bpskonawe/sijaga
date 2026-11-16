@@ -18,7 +18,7 @@ QR code ditampilkan di halaman **Layar Loket** (`loket.html`), tepat di bawah he
 ### Posisi di Halaman:
 ```
 ┌─────────────────────────────────────┐
-│  Header: SIPELOK - Layar Loket     │
+│  Header: SIJAGA - Layar Loket     │
 ├─────────────────────────────────────┤
 │  Jam Besar & Shift Aktif           │
 ├─────────────────────────────────────┤
@@ -41,8 +41,8 @@ const presensiUrl = location.origin + location.pathname.replace('loket.html', 'p
 ```
 
 **Contoh:**
-- Jika loket.html diakses via: `http://192.168.1.10/sipelok/loket.html`
-- Maka presensiUrl: `http://192.168.1.10/sipelok/presensi.html`
+- Jika loket.html diakses via: `http://192.168.1.10/sijaga/loket.html`
+- Maka presensiUrl: `http://192.168.1.10/sijaga/presensi.html`
 
 ### 2. Generate QR Code
 ```javascript
@@ -102,17 +102,17 @@ const qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data
 
 **Localhost (Development):**
 ```
-http://localhost/sipelok/presensi.html
+http://localhost/sijaga/presensi.html
 ```
 
 **IP Address (LAN):**
 ```
-http://192.168.1.10/sipelok/presensi.html
+http://192.168.1.10/sijaga/presensi.html
 ```
 
 **Domain (Production):**
 ```
-https://sipelok.bps-konawe.go.id/presensi.html
+https://sijaga.bps-konawe.go.id/presensi.html
 ```
 
 ### Catatan Penting:
@@ -124,7 +124,7 @@ https://sipelok.bps-konawe.go.id/presensi.html
 ## 🔍 Testing QR Code
 
 ### Test 1: Scan QR dari HP
-1. Buka `http://[SERVER_IP]/sipelok/loket.html` di PC loket
+1. Buka `http://[SERVER_IP]/sijaga/loket.html` di PC loket
 2. Lihat QR code yang tampil
 3. Scan QR dengan HP petugas
 4. Pastikan halaman presensi.html terbuka
@@ -255,10 +255,10 @@ Edit file `loket.html` baris 97-104:
 
 ## 🚀 Cara Update
 
-Salin ulang file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 └── loket.html    ← PERBARUI
 ```
 

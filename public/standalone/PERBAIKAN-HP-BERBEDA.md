@@ -237,7 +237,7 @@ el("#kirim").onclick = async () => {
 
 ### Test 1: Kompresi Foto
 ```
-1. Buka: http://localhost/sipelok/presensi.html
+1. Buka: http://localhost/sijaga/presensi.html
 2. Ambil foto dari HP (ukuran besar, misal 5 MB)
 3. Lihat console browser (F12):
    ✅ "Foto dikompresi: 5120.0 KB → 180.5 KB"
@@ -250,7 +250,7 @@ el("#kirim").onclick = async () => {
 ### Test 2: Retry Mechanism
 ```
 1. Matikan koneksi internet sementara
-2. Buka: http://localhost/sipelok/presensi.html
+2. Buka: http://localhost/sijaga/presensi.html
 3. Isi form dan klik "Simpan Presensi"
 4. Lihat progress bar:
    ✅ "Memeriksa koneksi ke server..."
@@ -270,7 +270,7 @@ el("#kirim").onclick = async () => {
 1. Buka Chrome DevTools (F12)
 2. Pilih tab Network
 3. Di dropdown "Throttling", pilih "Slow 3G"
-4. Buka: http://localhost/sipelok/presensi.html
+4. Buka: http://localhost/sijaga/presensi.html
 5. Isi form dan klik "Simpan Presensi"
 6. Lihat progress bar:
    ✅ Upload berjalan lambat tapi tetap berhasil
@@ -324,10 +324,10 @@ el("#kirim").onclick = async () => {
 
 ## 🚀 Cara Update
 
-Salin ulang file-file berikut ke `C:\xampp\htdocs\sipelok\`:
+Salin ulang file-file berikut ke `C:\xampp\htdocs\sijaga\`:
 
 ```
-sipelok/
+sijaga/
 ├── js/
 │   └── util.js              ← PERBARUI
 └── presensi.html            ← PERBARUI

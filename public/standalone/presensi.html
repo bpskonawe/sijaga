@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Presensi Petugas · SIPELOK</title>
-<link rel="icon" href="image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230c2431'/%3E%3Cg fill='none' stroke='%23f2691f' stroke-width='7' stroke-linecap='round'%3E%3Crect x='30' y='34' width='68' height='56' rx='12'/%3E%3Cpath d='M30 52h68M46 76V64M60 76V58M74 76v-8'/%3E%3C/g%3E%3C/svg%3E" />
+<title>Presensi Petugas · SIJAGA</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230c2431'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52-23-9-39-27-39-52V30z' fill='%23f2691f'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52z' fill='%23e2571b'/%3E%3Cpath d='M47 21v13M81 21v13' fill='none' stroke='%23f2ede4' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='64' cy='66' r='23' fill='%23f2ede4'/%3E%3Cpath d='M64 52v14l10 7' fill='none' stroke='%230c2431' stroke-width='6.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/gaya.css?v=2.0.0" />
+<link rel="stylesheet" href="css/gaya.css?v=2.1.0" />
 <style>
   .jenis { display: flex; gap: 8px; }
   .jenis label { flex: 1; }
@@ -75,7 +75,7 @@
 </script>
 <div id="app"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--mist-300)"><span class="spin" style="font-size:1.6rem">◌</span>&nbsp; Memuat…</div></div>
 
-<script src="js/util.js?v=2.0.0"></script>
+<script src="js/util.js?v=2.1.0"></script>
 <script>
   // Version check
   if (typeof UTIL_VERSION === 'undefined') {
@@ -105,8 +105,8 @@
     const now = new Date();
     return '<div style="max-width:440px;margin:0 auto;padding:26px 18px 48px;min-height:100vh">' +
       '<div class="row" style="justify-content:center;gap:10px">' +
-        '<span class="mk" style="width:38px;height:38px;border-radius:11px;background:var(--brand-500);color:#1d1206;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3.5"/><path d="M3 9.5h18M7 16.5v-3M11 16.5v-5M15 16.5v-2"/></svg></span>' +
-        '<span><b class="display" style="font-size:1.05rem">SIPELOK</b><br><span class="small" style="color:var(--mist-300)">BPS Kab. Konawe · <span class="tnum">' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '</span></span></span>' +
+        '<img class="mk-logo" src="img/logo-sijaga.svg" alt="Logo SIJAGA" width="38" height="38" style="display:block;border-radius:8px;flex:none">' +
+        '<span><b class="display" style="font-size:1.05rem">SIJAGA</b><br><span class="small" style="color:var(--mist-300)">BPS Kab. Konawe · <span class="tnum">' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '</span></span></span>' +
       '</div>' +
       '<div class="card pad rise mt-2" style="color:var(--ink-900)">' + isi + '</div>' +
       '<p class="small center mt-2" style="color:var(--mist-400)">Loket Pelayanan Terpadu · ' + now.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" }) + '</p>' +
@@ -119,7 +119,7 @@
     const jd = jadwalUntukTanggal(t);
 
     el("#app").innerHTML = kerangka(
-      '<span class="eyebrow">Presensi Piket Loket</span>' +
+      '<span class="eyebrow">Presensi Petugas Pelayanan</span>' +
       '<h2 class="display" style="font-size:1.45rem;margin-top:6px">Pilih Nama & Shift</h2>' +
       '<p class="small muted">Tanggal: ' + fmtDateLong(t) + '</p>' +
 
@@ -312,94 +312,50 @@
         }
       }
 
-      // Tampilkan progress container
+      // Kunci tombol SEGERA (sebelum await apa pun) agar ketukan ganda tidak mengirim ulang
+      const tombolKirim = el("#kirim");
+      if (tombolKirim.disabled) return;
+      tombolKirim.disabled = true;
+      tombolKirim.textContent = "Menyimpan…";
+      pesan.textContent = "";
+
       const progressContainer = el("#progressContainer");
       const progressBar = el("#progressBar");
       const progressStatus = el("#progressStatus");
       const progressDetail = el("#progressDetail");
-      
       progressContainer.classList.remove("hidden");
       progressBar.style.width = "0%";
       progressBar.textContent = "0%";
-      progressStatus.textContent = "Memeriksa koneksi...";
+      progressStatus.textContent = "Mengirim data presensi...";
       progressStatus.className = "progress-status";
       progressDetail.textContent = "";
-      
-      // Disable tombol kirim saat upload
-      const tombolKirim = el("#kirim");
-      tombolKirim.disabled = true;
-      tombolKirim.textContent = "Menyimpan...";
-      
-      // Cek koneksi ke server terlebih dahulu
-      try {
-        progressStatus.textContent = "Memeriksa koneksi ke server...";
-        const pingResult = await http("ping");
-        if (!pingResult || !pingResult.ok) {
-          throw new Error("Server tidak merespons");
-        }
-        console.log("✓ Koneksi ke server OK");
-      } catch (e) {
-        console.error("Koneksi ke server gagal:", e);
-        progressStatus.textContent = "✗ Tidak dapat terhubung ke server";
-        progressStatus.className = "progress-status upload-error";
-        progressDetail.textContent = "Periksa koneksi internet Anda dan coba lagi.";
-        tombolKirim.disabled = false;
-        tombolKirim.textContent = "Coba Lagi";
-        return;
-      }
 
-      // Progress callback
+      // Hanya menampilkan kemajuan — penyimpanan TIDAK boleh dipicu dari sini
       const onProgress = (progress) => {
         progressBar.style.width = progress.percent + "%";
         progressBar.textContent = progress.percent + "%";
         progressStatus.textContent = progress.status;
-        
+        progressStatus.className = "progress-status" + (progress.error ? " upload-error" : progress.success ? " upload-success" : "");
         if (progress.loaded && progress.total) {
-          const loadedKB = (progress.loaded / 1024).toFixed(1);
-          const totalKB = (progress.total / 1024).toFixed(1);
-          progressDetail.textContent = "Upload: " + loadedKB + " KB / " + totalKB + " KB";
+          progressDetail.textContent = "Upload: " + (progress.loaded / 1024).toFixed(1) + " KB / " + (progress.total / 1024).toFixed(1) + " KB";
         }
-        
-        if (progress.retry) {
-          progressStatus.className = "progress-status";
-          progressDetail.textContent = "Mencoba ulang... Mohon tunggu.";
-        } else if (progress.error) {
-          progressStatus.className = "progress-status upload-error";
-          tombolKirim.disabled = false;
-          tombolKirim.textContent = "Coba Lagi";
-          progressDetail.textContent = "Periksa koneksi internet Anda atau coba lagi nanti.";
-        } else if (progress.success) {
-          progressStatus.className = "progress-status upload-success";
-          // Tunggu sebentar sebelum tampilkan hasil
-          setTimeout(() => {
-            progressContainer.classList.add("hidden");
-            if (jenis === "masuk") {
-              const r = checkIn(petugas, sh, foto);
-              tampilkanHasil(r, "masuk");
-            } else {
-              const terbuka = findOpenRecord(t, sh, pid);
-              const r = checkOut(terbuka, foto);
-              tampilkanHasil(r, "keluar");
-            }
-          }, 1000);
-        }
+        if (progress.retry) progressDetail.textContent = "Mencoba ulang... Mohon tunggu.";
       };
 
-      // Kirim data presensi
+      // Satu kali simpan; layar berhasil baru tampil setelah server menjawab
       try {
-        progressStatus.textContent = "Mengirim data presensi...";
-        
-        if (jenis === "masuk") {
-          checkIn(petugas, sh, foto, onProgress);
-        } else {
-          const terbuka = findOpenRecord(t, sh, pid);
-          checkOut(terbuka, foto, onProgress);
-        }
+        const r = jenis === "masuk"
+          ? await checkIn(petugas, sh, foto, onProgress)
+          : await checkOut(findOpenRecord(t, sh, pid), foto, onProgress);
+        tampilkanHasil(r, jenis);
       } catch (e) {
-        console.error("Error saat mengirim presensi:", e);
-        progressStatus.textContent = "✗ Error: " + e.message;
+        console.error("Gagal menyimpan presensi:", e);
+        const ganda = e.code === "duplikat";
+        progressStatus.textContent = "✗ Presensi tidak tersimpan";
         progressStatus.className = "progress-status upload-error";
-        progressDetail.textContent = "Silakan coba lagi.";
+        progressDetail.textContent = ganda ? "" : "Periksa koneksi Anda, lalu coba lagi.";
+        pesan.textContent = String(e.message || e).split("\n")[0];
+        if (ganda) { try { await init(); segarkan(); } catch (e2) { console.error(e2); } }
         tombolKirim.disabled = false;
         tombolKirim.textContent = "Coba Lagi";
       }

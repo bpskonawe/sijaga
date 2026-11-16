@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin & Rekap · SIPELOK</title>
-<link rel="icon" href="image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230c2431'/%3E%3Cg fill='none' stroke='%23f2691f' stroke-width='7' stroke-linecap='round'%3E%3Crect x='30' y='34' width='68' height='56' rx='12'/%3E%3Cpath d='M30 52h68M46 76V64M60 76V58M74 76v-8'/%3E%3C/g%3E%3C/svg%3E" />
+<title>Admin & Rekap · SIJAGA</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%230c2431'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52-23-9-39-27-39-52V30z' fill='%23f2691f'/%3E%3Cpath d='M64 17 103 30v31c0 25-16 43-39 52z' fill='%23e2571b'/%3E%3Cpath d='M47 21v13M81 21v13' fill='none' stroke='%23f2ede4' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='64' cy='66' r='23' fill='%23f2ede4'/%3E%3Cpath d='M64 52v14l10 7' fill='none' stroke='%230c2431' stroke-width='6.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/gaya.css?v=2.0.0" />
+<link rel="stylesheet" href="css/gaya.css?v=2.1.0" />
 <style>
   .filter-chip { padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--mist-200); font-weight: 800; font-size: .78rem; cursor: pointer; background: #fff; color: var(--ink-600); transition: all .15s; }
   .filter-chip.on { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
@@ -34,7 +34,7 @@
 </script>
 <div id="app"><div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--ink-500)"><span class="spin" style="font-size:1.6rem">◌</span>&nbsp; Memuat…</div></div>
 
-<script src="js/util.js?v=2.0.0"></script>
+<script src="js/util.js?v=2.1.0"></script>
 <script>
   let akun = null, tabAktif = "rekap";
   let q = "", cepat = "today", fShift = 0, fDari = "", fSampai = "";
@@ -46,8 +46,8 @@
     el("#app").innerHTML =
       '<div class="bg-board" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px">' +
       '<div class="card pad rise" style="width:100%;max-width:400px">' +
-        '<div class="row"><span class="mk" style="width:44px;height:44px;border-radius:12px;background:var(--brand-500);color:#1d1206;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3 5 5.8v5.4c0 4.5 3 7.8 7 9.3 4-1.5 7-4.8 7-9.3V5.8L12 3Z"/><path d="m9 11.5 2.2 2.2L15.5 9"/></svg></span>' +
-        '<div><b class="display" style="font-size:1.2rem">Konsol Admin</b><br><span class="small muted">SIPELOK · BPS Kab. Konawe</span></div></div>' +
+        '<div class="row"><img class="mk-logo" src="img/logo-sijaga.svg" alt="Logo SIJAGA" width="44" height="44" style="display:block;border-radius:10px;flex:none">' +
+        '<div><b class="display" style="font-size:1.2rem">Konsol Admin</b><br><span class="small muted">SIJAGA · BPS Kab. Konawe</span></div></div>' +
         '<div class="mt-2"><label class="f">Nama Pengguna</label><input class="input" id="lu" value="admin" autocomplete="username"></div>' +
         '<div class="mt-1"><label class="f">Kata Sandi</label><input class="input" id="lp" type="password" placeholder="••••••••" autocomplete="current-password"></div>' +
         '<p id="lerr" class="small" style="color:var(--ruby-700);margin-top:10px;min-height:1em"></p>' +
@@ -78,8 +78,8 @@
     ];
     el("#app").innerHTML =
       '<header class="topbar"><div class="wrap">' +
-        '<a class="brandmark" href="index.html"><span class="mk"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="3.5"/><path d="M3 9.5h18M7 16.5v-3M11 16.5v-5M15 16.5v-2"/></svg></span>' +
-        '<span><b>SIPELOK</b><small>Konsol Admin</small></span></a>' +
+        '<a class="brandmark" href="index.html"><img class="mk-logo" src="img/logo-sijaga.svg" alt="Logo SIJAGA" width="40" height="40" style="display:block;border-radius:9px;flex:none">' +
+        '<span><b>SIJAGA</b><small>Konsol Admin</small></span></a>' +
         '<div class="grow"></div><span id="modeBadge" class="hide-sm"></span>' +
         '<span class="badge brand">' + esc(akun.nama) + (akun.role !== "admin" ? " · lihat" : "") + '</span>' +
         '<button class="btn ghost sm" id="keluar">Keluar</button>' +
@@ -208,7 +208,7 @@
     el("#csv").onclick = () => {
       const data = [["Nama", "NIP", "Tanggal", "Shift", "Masuk", "Pulang", "Durasi (mnt)", "Status"]].concat(
         rows.map((r) => { const p = S.petugas.find((x) => x.id === r.petugasId); return [r.nama, (p && p.nip) || "", r.date, "Shift " + r.shift, r.masuk || "", r.keluar || "", durasiMenit(r) || "", r.keluar ? "Selesai" : "Bertugas"]; }));
-      downloadCsv("rekap-sipelok-" + todayStr() + ".csv", data);
+      downloadCsv("rekap-sijaga-" + todayStr() + ".csv", data);
     };
     el("#cetak").onclick = () => window.print();
     document.querySelectorAll("[data-foto]").forEach((b) => b.onclick = () => bukaLb(b.dataset.foto));
@@ -899,7 +899,7 @@
           S.petugas = []; S.records = []; S.jadwal = [];
           ["petugas", "records", "jadwal"].forEach((t) => {
             lsWrite(LS[t], []);
-            if (getMode() === "db") http("clear", { table: t }).catch(function () {});
+            if (getMode() === "db") http("clear", { table: t }).then(function (res) { if (!res || !res.ok) throw new Error((res && res.error) || "Server menolak permintaan"); }).catch(function (e) { alert("Gagal mengosongkan data " + t + " di server: " + e.message); });
           });
           emit(); renderAkun();
         }
@@ -922,7 +922,7 @@
       startSync();
       onChange(() => { if (akun) renderTab(); });
     } catch (err) {
-      console.error("SIPELOK gagal dimulai:", err);
+      console.error("SIJAGA gagal dimulai:", err);
       el("#app").innerHTML =
         '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--ink-900)">' +
         '<div class="card pad" style="max-width:440px"><span class="eyebrow">Halaman tidak dapat dimulai</span>' +

@@ -1,7 +1,7 @@
 {
-  "name": "SIPELOK — Presensi Piket Loket BPS Kab. Konawe",
-  "short_name": "SIPELOK",
-  "description": "Presensi piket loket pelayanan: scan QR, catat jam bertugas, foto atribut.",
+  "name": "SIJAGA — Sistem Informasi Jadwal Petugas Pelayanan BPS Kab. Konawe",
+  "short_name": "SIJAGA",
+  "description": "Jadwal piket dan presensi petugas pelayanan: catat jam bertugas, foto atribut, rekap admin.",
   "lang": "id",
   "start_url": ".",
   "display": "standalone",
