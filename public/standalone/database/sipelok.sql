@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS presensi (
   foto_keluar VARCHAR(255) NULL,
   updated     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX idx_tanggal (tanggal),
-  INDEX idx_petugas (petugas_id)
+  INDEX idx_petugas (petugas_id),
+  -- satu catatan per petugas per shift per hari (mencegah presensi ganda)
+  UNIQUE KEY uq_presensi (tanggal, shift, petugas_id)
 ) ENGINE=InnoDB;
 
 -- Jadwal piket PER BULAN: setiap (tanggal, shift) diisi 4 petugas.

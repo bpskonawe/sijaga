@@ -66,10 +66,7 @@ function to_iso(?string $v): ?string { if (!$v) return null; $t = strtotime($v);
 function to_dt(?string $v): ?string  { if (!$v) return null; $t = strtotime($v); return $t === false ? null : date('Y-m-d H:i:s', $t); }
 
 function simpan_foto(?string $v, string $id, string $suf): ?string {
-  if (!$v) {
-    error_log("SIPELOK Foto: Data kosong untuk ID $id");
-    return null;
-  }
+  if (!$v) return null;
   
   // Cek apakah ini data URL (format: data:image/jpeg;base64,...)
   if (strpos($v, 'data:image') === 0) {
@@ -198,68 +195,56 @@ try {
             $upsert->execute([$id, $r['nama'] ?? '', $r['nip'] ?? null]);
           }
         } elseif ($table === 'records') {
-          error_log("SIPELOK: Processing " . count($rows) . " records rows");
-          
-          // Gunakan INSERT ... ON DUPLICATE KEY UPDATE untuk menghindari duplicate entry error
+          // Satu catatan per (tanggal, shift, petugas). Baris dikenali lewat id:
+          //  - id sama            -> pembaruan (mis. presensi pulang, atau kirim ulang) — aman diulang
+          //  - id beda, kunci sama -> check-in ganda -> DITOLAK (409)
+          $cari = $db->prepare('SELECT id FROM presensi WHERE tanggal = ? AND shift = ? AND petugas_id = ? ORDER BY (id = ?) DESC LIMIT 1');
           $upsert = $db->prepare('
-            INSERT INTO presensi (id, tanggal, shift, petugas_id, nama, masuk, keluar, foto_masuk, foto_keluar) 
-            VALUES (?,?,?,?,?,?,?,?,?) 
-            ON DUPLICATE KEY UPDATE 
-              tanggal=VALUES(tanggal),
-              shift=VALUES(shift),
-              petugas_id=VALUES(petugas_id),
+            INSERT INTO presensi (id, tanggal, shift, petugas_id, nama, masuk, keluar, foto_masuk, foto_keluar)
+            VALUES (?,?,?,?,?,?,?,?,?)
+            ON DUPLICATE KEY UPDATE
               nama=VALUES(nama),
-              masuk=VALUES(masuk),
-              keluar=VALUES(keluar),
-              foto_masuk=VALUES(foto_masuk),
-              foto_keluar=VALUES(foto_keluar)
+              masuk=COALESCE(masuk, VALUES(masuk)),
+              keluar=COALESCE(VALUES(keluar), keluar),
+              foto_masuk=COALESCE(VALUES(foto_masuk), foto_masuk),
+              foto_keluar=COALESCE(VALUES(foto_keluar), foto_keluar)
           ');
-          
-          $updated = 0;
-          $inserted = 0;
-          $errors = 0;
-          
+          $tolak = function (string $pesan, int $kode, ?string $jenis = null) use ($db): void {
+            $db->rollBack();
+            out(['ok' => false, 'error' => $pesan, 'code' => $jenis], $kode);
+          };
+
           foreach ($rows as $index => $r) {
-            try {
-              $id = (string) ($r['id'] ?? '');
-              if (empty($id)) {
-                error_log("SIPELOK: Skipping record with empty ID at index $index");
-                $errors++;
-                continue;
-              }
-              
-              $v = [
-                $id,
-                $r['date'] ?? null, 
-                (int) ($r['shift'] ?? 1), 
-                $r['petugasId'] ?? '', 
-                $r['nama'] ?? '',
-                to_dt($r['masuk'] ?? null), 
-                to_dt($r['keluar'] ?? null),
-                simpan_foto($r['fotoMasuk'] ?? null, $id, 'masuk'),
-                simpan_foto($r['fotoKeluar'] ?? null, $id, 'keluar'),
-              ];
-              
-              $upsert->execute($v);
-              
-              // rowCount() returns 1 for insert, 2 for update (MySQL specific)
-              $rowCount = $upsert->rowCount();
-              if ($rowCount === 2) {
-                $updated++;
-                error_log("SIPELOK: Updated existing record ID: $id");
-              } else {
-                $inserted++;
-                if ($inserted <= 5 || $inserted % 50 === 0) {
-                  error_log("SIPELOK: Inserted new record ID: $id");
-                }
-              }
-            } catch (Exception $e) {
-              error_log("SIPELOK: Error processing record row $index: " . $e->getMessage());
-              $errors++;
+            $id  = (string) ($r['id'] ?? '');
+            $tgl = (string) ($r['date'] ?? '');
+            $sh  = (int) ($r['shift'] ?? 0);
+            $pid = (string) ($r['petugasId'] ?? '');
+            if ($id === '' || $tgl === '' || $pid === '' || ($sh !== 1 && $sh !== 2)) {
+              $tolak("Data presensi tidak lengkap (baris $index).", 400);
+            }
+
+            $cari->execute([$tgl, $sh, $pid, $id]);
+            $ada = $cari->fetchColumn();
+            if ($ada !== false && (string) $ada !== $id) {
+              $tolak('Presensi masuk untuk petugas ini pada tanggal & shift tersebut sudah tercatat.', 409, 'duplikat');
+            }
+
+            $upsert->execute([
+              $id, $tgl, $sh, $pid, $r['nama'] ?? '',
+              to_dt($r['masuk'] ?? null),
+              to_dt($r['keluar'] ?? null),
+              simpan_foto($r['fotoMasuk'] ?? null, $id, 'masuk'),
+              simpan_foto($r['fotoKeluar'] ?? null, $id, 'keluar'),
+            ]);
+
+            // Dua permintaan bersamaan bisa sama-sama lolos pemeriksaan di atas; bila
+            // UNIQUE KEY (tanggal, shift, petugas_id) membuat baris ini menimpa milik
+            // permintaan lain, id yang tersimpan bukan id kita -> batalkan.
+            $cari->execute([$tgl, $sh, $pid, $id]);
+            if ((string) $cari->fetchColumn() !== $id) {
+              $tolak('Presensi masuk untuk petugas ini pada tanggal & shift tersebut sudah tercatat.', 409, 'duplikat');
             }
           }
-          
-          error_log("SIPELOK: Records processing complete - Updated: $updated, Inserted: $inserted, Errors: $errors");
         } elseif ($table === 'jadwal') {
           error_log("SIPELOK: Processing " . count($rows) . " jadwal rows");
           

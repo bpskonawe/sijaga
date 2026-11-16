@@ -300,6 +300,16 @@ function httpWithProgress(action, opts, onProgress) {
           } else {
             const errorMsg = data.error || "HTTP " + xhr.status + ": " + xhr.statusText;
             console.error("=== httpWithProgress ERROR ===", errorMsg);
+
+            // Ditolak server (4xx: presensi ganda, kunci API salah, data tidak lengkap):
+            // mengulang tidak akan mengubah hasil, langsung laporkan.
+            if (xhr.status >= 400 && xhr.status < 500) {
+              if (onProgress) onProgress({ percent: 100, status: "✗ " + errorMsg, error: true });
+              const err = new Error(errorMsg);
+              err.code = data.code || null;
+              reject(err);
+              return;
+            }
             
             // Retry jika ada error dan masih ada percobaan
             if (retryCount < MAX_RETRIES - 1) {
@@ -499,32 +509,12 @@ function startSync(intervalMs) {
       const s = await http("sig");
       if (s && s.sig && s.sig !== lastSig) {
         lastSig = s.sig;
-        // Hanya reload data, jangan overwrite jika ada perubahan lokal
         const j = await http("bootstrap");
         if (j && j.ok) {
-          // Merge: hanya update jika record dari server lebih baru
-          const localIds = new Set(S.records.map(r => r.id));
-          const serverRecords = j.records || [];
-          
-          // Tambahkan record baru dari server yang belum ada di lokal
-          serverRecords.forEach(sr => {
-            if (!localIds.has(sr.id)) {
-              S.records.push(sr);
-            }
-          });
-          
-          // Update record yang sudah ada jika versi server lebih baru
-          S.records = S.records.map(lr => {
-            const sr = serverRecords.find(s => s.id === lr.id);
-            if (sr) {
-              // Gunakan yang lebih baru berdasarkan timestamp
-              const localTime = new Date(lr.masuk || lr.keluar || 0).getTime();
-              const serverTime = new Date(sr.masuk || sr.keluar || 0).getTime();
-              return serverTime > localTime ? sr : lr;
-            }
-            return lr;
-          });
-          
+          // Presensi baru masuk ke S.records setelah server mengonfirmasi, jadi data
+          // server adalah sumber kebenaran: ganti seluruhnya (termasuk presensi pulang
+          // dan penghapusan yang dilakukan dari perangkat lain).
+          S.records = j.records || [];
           lsWrite(LS.records, S.records);
           emit();
         }
@@ -615,10 +605,11 @@ function persistDelete(table, id, rows) {
   lsWrite(LS[table], rows);
   if (MODE === "db") {
     http("delete", { table: table, id: id })
-      .then(res => {
-        if (!res || !res.ok) console.error("Gagal hapus dari database:", res);
-      })
-      .catch(err => console.error("Error hapus dari database:", err));
+      .then(res => { if (!res || !res.ok) throw new Error((res && res.error) || "Server menolak permintaan"); })
+      .catch(err => {
+        console.error("Error hapus dari database:", err);
+        alert("Gagal menghapus data di server: " + err.message);
+      });
   }
 }
 
@@ -780,128 +771,46 @@ function findOpenRecord(date, shift, petugasId) {
 function findRecord(date, shift, petugasId) {
   return S.records.find((r) => r.date === date && r.shift === shift && r.petugasId === petugasId);
 }
-function checkIn(petugas, shift, fotoMasuk, onProgress) {
-  const r = { id: uid(), date: todayStr(), shift: shift, petugasId: petugas.id, nama: petugas.nama, masuk: new Date().toISOString(), keluar: null, fotoMasuk: fotoMasuk || null, fotoKeluar: null };
-  S.records.unshift(r);
-  
-  // Simpan ke localStorage dulu
-  lsWrite(LS.records, S.records);
-  
-  console.log("=== checkIn START ===");
-  console.log("Record ID:", r.id);
-  console.log("Total records in S.records:", S.records.length);
-  console.log("Mode:", MODE);
-  
-  // Simpan ke database jika mode db
-  if (MODE === "db") {
-    if (onProgress) {
-      onProgress({ percent: 10, status: "Menyimpan ke database..." });
-    }
-    
-    // Kirim hanya record baru (bukan semua records) untuk menghemat bandwidth
-    console.log("Sending only new record to server...");
-    
-    httpWithProgress("save", { table: "records", body: [r] }, onProgress)
-      .then(res => {
-        console.log("=== checkIn RESPONSE ===");
-        console.log("Response:", res);
-        
-        if (!res || !res.ok) {
-          console.error("Gagal simpan presensi ke database:", res);
-          if (onProgress) {
-            onProgress({ percent: 100, status: "✗ Gagal: " + (res?.error || "Unknown error"), error: true });
-          }
-          alert("Peringatan: Presensi tersimpan lokal tapi gagal ke server.\n\nError: " + (res?.error || "Unknown") + "\n\nPeriksa console browser (F12) untuk detail.");
-        } else {
-          console.log("✓ Presensi berhasil disimpan ke database. ID:", r.id);
-          if (onProgress) {
-            onProgress({ percent: 100, status: "✓ Presensi berhasil disimpan!", success: true });
-          }
-        }
-      })
-      .catch(err => {
-        console.error("=== checkIn ERROR ===");
-        console.error("Error:", err);
-        console.error("Error message:", err.message);
-        console.error("Error stack:", err.stack);
-        
-        if (onProgress) {
-          onProgress({ percent: 100, status: "✗ Error: " + err.message, error: true });
-        }
-        alert("Error koneksi ke server.\n\nError: " + err.message + "\n\nPresensi tersimpan lokal saja.\nPeriksa console browser (F12) untuk detail.");
-      });
-  } else {
-    console.log("Mode lokal, tidak mengirim ke server");
-    // Mode lokal, langsung selesai
-    if (onProgress) {
+/* Presensi yang sedang dikirim, per (tanggal|shift|petugas) — mencegah kiriman ganda
+   bila tombol tertekan berkali-kali sebelum server menjawab. */
+const sedangSimpan = new Set();
+async function simpanPresensi(kunci, baris, onProgress) {
+  if (sedangSimpan.has(kunci)) throw new Error("Presensi sedang disimpan, mohon tunggu.");
+  sedangSimpan.add(kunci);
+  try {
+    if (MODE === "db") {
+      if (onProgress) onProgress({ percent: 5, status: "Menyimpan ke server..." });
+      // Hanya baris yang berubah yang dikirim. Gagal -> melempar error ke pemanggil.
+      await httpWithProgress("save", { table: "records", body: [baris] }, onProgress);
+    } else if (onProgress) {
       onProgress({ percent: 100, status: "✓ Presensi tersimpan (mode lokal)", success: true });
     }
+  } finally {
+    sedangSimpan.delete(kunci);
   }
-  
-  console.log("=== checkIn END ===");
-  
+}
+
+/* checkIn/checkOut mengembalikan Promise: selesai SETELAH server menyimpan.
+   Bila gagal, Promise ditolak dan data lokal tidak diubah, sehingga aman dicoba lagi.
+   onProgress hanya untuk menampilkan kemajuan — jangan memicu simpan dari dalamnya. */
+async function checkIn(petugas, shift, fotoMasuk, onProgress) {
+  const date = todayStr();
+  if (findRecord(date, shift, petugas.id)) throw new Error("Anda sudah memiliki catatan masuk pada shift ini.");
+  const r = { id: uid(), date: date, shift: shift, petugasId: petugas.id, nama: petugas.nama, masuk: new Date().toISOString(), keluar: null, fotoMasuk: fotoMasuk || null, fotoKeluar: null };
+  await simpanPresensi(date + "|" + shift + "|" + petugas.id, r, onProgress);
+  S.records.unshift(r);
+  lsWrite(LS.records, S.records);
   emit();
   return r;
 }
-function checkOut(rec, fotoKeluar, onProgress) {
-  rec.keluar = new Date().toISOString();
-  if (fotoKeluar) rec.fotoKeluar = fotoKeluar;
-  
-  // Simpan ke localStorage dulu
+async function checkOut(rec, fotoKeluar, onProgress) {
+  if (!rec) throw new Error("Belum ada presensi masuk untuk dipulangkan.");
+  if (rec.keluar) throw new Error("Presensi pulang pada shift ini sudah tercatat.");
+  const baru = Object.assign({}, rec, { keluar: new Date().toISOString() });
+  if (fotoKeluar) baru.fotoKeluar = fotoKeluar;
+  await simpanPresensi(rec.date + "|" + rec.shift + "|" + rec.petugasId, baru, onProgress);
+  Object.assign(rec, baru);
   lsWrite(LS.records, S.records);
-  
-  console.log("=== checkOut START ===");
-  console.log("Record ID:", rec.id);
-  console.log("Mode:", MODE);
-  
-  // Simpan ke database jika mode db
-  if (MODE === "db") {
-    if (onProgress) {
-      onProgress({ percent: 10, status: "Menyimpan ke database..." });
-    }
-    
-    // Kirim hanya record yang diupdate (bukan semua records)
-    console.log("Sending only updated record to server...");
-    
-    httpWithProgress("save", { table: "records", body: [rec] }, onProgress)
-      .then(res => {
-        console.log("=== checkOut RESPONSE ===");
-        console.log("Response:", res);
-        
-        if (!res || !res.ok) {
-          console.error("Gagal simpan presensi pulang ke database:", res);
-          if (onProgress) {
-            onProgress({ percent: 100, status: "✗ Gagal: " + (res?.error || "Unknown error"), error: true });
-          }
-          alert("Peringatan: Presensi pulang tersimpan lokal tapi gagal ke server.\n\nError: " + (res?.error || "Unknown") + "\n\nPeriksa console browser (F12) untuk detail.");
-        } else {
-          console.log("✓ Presensi pulang berhasil disimpan. ID:", rec.id);
-          if (onProgress) {
-            onProgress({ percent: 100, status: "✓ Presensi pulang berhasil disimpan!", success: true });
-          }
-        }
-      })
-      .catch(err => {
-        console.error("=== checkOut ERROR ===");
-        console.error("Error:", err);
-        console.error("Error message:", err.message);
-        console.error("Error stack:", err.stack);
-        
-        if (onProgress) {
-          onProgress({ percent: 100, status: "✗ Error: " + err.message, error: true });
-        }
-        alert("Error koneksi ke server.\n\nError: " + err.message + "\n\nPresensi pulang tersimpan lokal saja.\nPeriksa console browser (F12) untuk detail.");
-      });
-  } else {
-    console.log("Mode lokal, tidak mengirim ke server");
-    // Mode lokal, langsung selesai
-    if (onProgress) {
-      onProgress({ percent: 100, status: "✓ Presensi tersimpan (mode lokal)", success: true });
-    }
-  }
-  
-  console.log("=== checkOut END ===");
-  
   emit();
   return rec;
 }
@@ -909,8 +818,16 @@ function deleteRecords(ids) {
   const set = new Set(ids);
   S.records = S.records.filter((r) => !set.has(r.id));
   lsWrite(LS.records, S.records);
-  if (MODE === "db") http("delete", { table: "records", id: ids.join(",") }).catch(() => {});
   emit();
+  if (MODE === "db") {
+    http("delete", { table: "records", id: ids.join(",") })
+      .then((res) => { if (!res || !res.ok) throw new Error((res && res.error) || "Server menolak permintaan"); })
+      .catch((err) => {
+        console.error("Gagal hapus presensi di server:", err);
+        alert("Gagal menghapus presensi di server: " + err.message + "\n\nData akan dimuat ulang dari server.");
+        init();
+      });
+  }
 }
 
 /* ---------------- akun / auth ---------------- */

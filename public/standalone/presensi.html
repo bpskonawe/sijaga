@@ -312,94 +312,50 @@
         }
       }
 
-      // Tampilkan progress container
+      // Kunci tombol SEGERA (sebelum await apa pun) agar ketukan ganda tidak mengirim ulang
+      const tombolKirim = el("#kirim");
+      if (tombolKirim.disabled) return;
+      tombolKirim.disabled = true;
+      tombolKirim.textContent = "Menyimpan…";
+      pesan.textContent = "";
+
       const progressContainer = el("#progressContainer");
       const progressBar = el("#progressBar");
       const progressStatus = el("#progressStatus");
       const progressDetail = el("#progressDetail");
-      
       progressContainer.classList.remove("hidden");
       progressBar.style.width = "0%";
       progressBar.textContent = "0%";
-      progressStatus.textContent = "Memeriksa koneksi...";
+      progressStatus.textContent = "Mengirim data presensi...";
       progressStatus.className = "progress-status";
       progressDetail.textContent = "";
-      
-      // Disable tombol kirim saat upload
-      const tombolKirim = el("#kirim");
-      tombolKirim.disabled = true;
-      tombolKirim.textContent = "Menyimpan...";
-      
-      // Cek koneksi ke server terlebih dahulu
-      try {
-        progressStatus.textContent = "Memeriksa koneksi ke server...";
-        const pingResult = await http("ping");
-        if (!pingResult || !pingResult.ok) {
-          throw new Error("Server tidak merespons");
-        }
-        console.log("✓ Koneksi ke server OK");
-      } catch (e) {
-        console.error("Koneksi ke server gagal:", e);
-        progressStatus.textContent = "✗ Tidak dapat terhubung ke server";
-        progressStatus.className = "progress-status upload-error";
-        progressDetail.textContent = "Periksa koneksi internet Anda dan coba lagi.";
-        tombolKirim.disabled = false;
-        tombolKirim.textContent = "Coba Lagi";
-        return;
-      }
 
-      // Progress callback
+      // Hanya menampilkan kemajuan — penyimpanan TIDAK boleh dipicu dari sini
       const onProgress = (progress) => {
         progressBar.style.width = progress.percent + "%";
         progressBar.textContent = progress.percent + "%";
         progressStatus.textContent = progress.status;
-        
+        progressStatus.className = "progress-status" + (progress.error ? " upload-error" : progress.success ? " upload-success" : "");
         if (progress.loaded && progress.total) {
-          const loadedKB = (progress.loaded / 1024).toFixed(1);
-          const totalKB = (progress.total / 1024).toFixed(1);
-          progressDetail.textContent = "Upload: " + loadedKB + " KB / " + totalKB + " KB";
+          progressDetail.textContent = "Upload: " + (progress.loaded / 1024).toFixed(1) + " KB / " + (progress.total / 1024).toFixed(1) + " KB";
         }
-        
-        if (progress.retry) {
-          progressStatus.className = "progress-status";
-          progressDetail.textContent = "Mencoba ulang... Mohon tunggu.";
-        } else if (progress.error) {
-          progressStatus.className = "progress-status upload-error";
-          tombolKirim.disabled = false;
-          tombolKirim.textContent = "Coba Lagi";
-          progressDetail.textContent = "Periksa koneksi internet Anda atau coba lagi nanti.";
-        } else if (progress.success) {
-          progressStatus.className = "progress-status upload-success";
-          // Tunggu sebentar sebelum tampilkan hasil
-          setTimeout(() => {
-            progressContainer.classList.add("hidden");
-            if (jenis === "masuk") {
-              const r = checkIn(petugas, sh, foto);
-              tampilkanHasil(r, "masuk");
-            } else {
-              const terbuka = findOpenRecord(t, sh, pid);
-              const r = checkOut(terbuka, foto);
-              tampilkanHasil(r, "keluar");
-            }
-          }, 1000);
-        }
+        if (progress.retry) progressDetail.textContent = "Mencoba ulang... Mohon tunggu.";
       };
 
-      // Kirim data presensi
+      // Satu kali simpan; layar berhasil baru tampil setelah server menjawab
       try {
-        progressStatus.textContent = "Mengirim data presensi...";
-        
-        if (jenis === "masuk") {
-          checkIn(petugas, sh, foto, onProgress);
-        } else {
-          const terbuka = findOpenRecord(t, sh, pid);
-          checkOut(terbuka, foto, onProgress);
-        }
+        const r = jenis === "masuk"
+          ? await checkIn(petugas, sh, foto, onProgress)
+          : await checkOut(findOpenRecord(t, sh, pid), foto, onProgress);
+        tampilkanHasil(r, jenis);
       } catch (e) {
-        console.error("Error saat mengirim presensi:", e);
-        progressStatus.textContent = "✗ Error: " + e.message;
+        console.error("Gagal menyimpan presensi:", e);
+        const ganda = e.code === "duplikat";
+        progressStatus.textContent = "✗ Presensi tidak tersimpan";
         progressStatus.className = "progress-status upload-error";
-        progressDetail.textContent = "Silakan coba lagi.";
+        progressDetail.textContent = ganda ? "" : "Periksa koneksi Anda, lalu coba lagi.";
+        pesan.textContent = String(e.message || e).split("\n")[0];
+        if (ganda) { try { await init(); segarkan(); } catch (e2) { console.error(e2); } }
         tombolKirim.disabled = false;
         tombolKirim.textContent = "Coba Lagi";
       }

@@ -899,7 +899,7 @@
           S.petugas = []; S.records = []; S.jadwal = [];
           ["petugas", "records", "jadwal"].forEach((t) => {
             lsWrite(LS[t], []);
-            if (getMode() === "db") http("clear", { table: t }).catch(function () {});
+            if (getMode() === "db") http("clear", { table: t }).then(function (res) { if (!res || !res.ok) throw new Error((res && res.error) || "Server menolak permintaan"); }).catch(function (e) { alert("Gagal mengosongkan data " + t + " di server: " + e.message); });
           });
           emit(); renderAkun();
         }
